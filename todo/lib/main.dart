@@ -30,20 +30,25 @@ class TodoListState extends State<TodoList> {
     }
   }
 
+  void _removeTodoItem(int index) {
+    setState(() => _todoItems.removeAt(index));
+  }
+
   Widget _buildTodoList() {
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
         if (index < _todoItems.length) {
-          return _buildTodoItem(_todoItems[index]);
+          return _buildTodoItem(_todoItems[index], index);
         }
         return null; // cannot be void
       },
     );
   }
 
-  Widget _buildTodoItem(String todoText) {
+  Widget _buildTodoItem(String todoText, int index) {
     return ListTile(
-      title: Text(todoText)
+      title: Text(todoText),
+      onTap: () => _promptRemoveTodoItem(index),
     );
   }
 
@@ -84,6 +89,31 @@ class TodoListState extends State<TodoList> {
           );
         }
       )
+    );
+  }
+
+  // Show an alert dialog asking the user to confirm that the task is done
+  void _promptRemoveTodoItem(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Mark "${_todoItems[index]}" as done?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('CANCEL'),
+              onPressed: () => Navigator.of(context).pop() // Close dialog
+            ),
+            FlatButton(
+              child: Text('MARK AS DONE'),
+              onPressed: () {
+                _removeTodoItem(index);
+                Navigator.of(context).pop(); // Close dialog
+              }
+            )
+          ]
+        );
+      }
     );
   }
 }

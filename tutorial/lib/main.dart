@@ -118,3 +118,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+class FavoriteWidget extends StatefulWidget {
+  @override
+  _FavoriteWidgetState createState() => _FavoriteWidgetState();
+}

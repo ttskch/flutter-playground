@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+// Uncomment lines 7 and 10 to view the visual layout at runtime.
+// import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 
-void main() => runApp(MyApp());
+void main() {
+  // debugPaintSizeEnabled = true;
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     Widget titleSection = Container(
       padding: const EdgeInsets.all(32),
       child: Row(
@@ -82,7 +86,7 @@ class MyApp extends StatelessWidget {
               'images/lake.jpg',
               width: 600,
               height: 240,
-              fit:BoxFit.cover,
+              fit: BoxFit.cover,
             ),
             titleSection,
             buttonSection,

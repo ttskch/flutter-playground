@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'account_log_list.dart';
 
 class AccountList extends StatefulWidget {
   @override
@@ -49,7 +50,8 @@ class AccountListState extends State<AccountList> {
   Widget _buildItem(String username, int index) {
     return ListTile(
       title: Text(username),
-      onTap: () => _promptRemove(index),
+      onTap: () => _pushAccountLogListScreen(username),
+//      onTap: () => _promptRemove(index),
     );
   }
 
@@ -120,6 +122,16 @@ class AccountListState extends State<AccountList> {
           ]
         );
       }
+    );
+  }
+
+  void _pushAccountLogListScreen(String username) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return AccountLogList(username);
+        }
+      )
     );
   }
 }

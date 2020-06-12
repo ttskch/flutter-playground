@@ -48,10 +48,20 @@ class AccountListState extends State<AccountList> {
   }
 
   Widget _buildItem(String username, int index) {
-    return ListTile(
-      title: Text(username),
-      onTap: () => _pushAccountLogListScreen(username),
-//      onTap: () => _promptRemove(index),
+    return Row(
+      children: [
+        Expanded(
+          child: ListTile(
+            title: Text(username),
+            onTap: () => _pushAccountLogListScreen(username),
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.delete),
+          color: Colors.red[500],
+          onPressed: () => _promptRemove(index),
+        ),
+      ],
     );
   }
 

@@ -25,7 +25,7 @@ class AccountList extends StatefulWidget {
 class AccountListState extends State<AccountList> {
   List<String> _usernames = [];
 
-  _load() async {
+  void _load() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() => _usernames = (prefs.getStringList('usernames')) ?? []);
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String appTitle = 'twch';
 
@@ -24,14 +25,30 @@ class AccountList extends StatefulWidget {
 class AccountListState extends State<AccountList> {
   List<String> _usernames = [];
 
+  _load() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() => _usernames = (prefs.getStringList('usernames')) ?? []);
+  }
+
+  void _save() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('usernames', _usernames);
+  }
+
   void _add(String username) {
     if (username.length > 0) {
-      setState(() => _usernames.add(username));
+      setState(() {
+        _usernames.add(username);
+        _save();
+      });
     }
   }
 
   void _remove(int index) {
-    setState(() => _usernames.removeAt(index));
+    setState(() {
+      _usernames.removeAt(index);
+      _save();
+    });
   }
 
   Widget _buildList() {
@@ -50,6 +67,12 @@ class AccountListState extends State<AccountList> {
       title: Text(username),
       onTap: () => _promptRemove(index),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
   }
 
   @override

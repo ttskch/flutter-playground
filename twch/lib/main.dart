@@ -1,54 +1,54 @@
 import 'package:flutter/material.dart';
 
-const String appTitle = 'Todo List';
+const String appTitle = 'twch';
 
 void main() {
-  runApp(TodoApp());
+  runApp(TwchApp());
 }
 
-class TodoApp extends StatelessWidget {
+class TwchApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: appTitle,
-      home: TodoList(),
+      home: AccountList(),
     );
   }
 }
 
-class TodoList extends StatefulWidget {
+class AccountList extends StatefulWidget {
   @override
-  createState() => TodoListState();
+  createState() => AccountListState();
 }
 
-class TodoListState extends State<TodoList> {
-  List<String> _todoItems = [];
+class AccountListState extends State<AccountList> {
+  List<String> _usernames = [];
 
-  void _addTodoItem(String task) {
-    if (task.length > 0) {
-      setState(() => _todoItems.add(task));
+  void _add(String username) {
+    if (username.length > 0) {
+      setState(() => _usernames.add(username));
     }
   }
 
-  void _removeTodoItem(int index) {
-    setState(() => _todoItems.removeAt(index));
+  void _remove(int index) {
+    setState(() => _usernames.removeAt(index));
   }
 
-  Widget _buildTodoList() {
+  Widget _buildList() {
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
-        if (index < _todoItems.length) {
-          return _buildTodoItem(_todoItems[index], index);
+        if (index < _usernames.length) {
+          return _buildItem(_usernames[index], index);
         }
         return null; // cannot be void
       },
     );
   }
 
-  Widget _buildTodoItem(String todoText, int index) {
+  Widget _buildItem(String username, int index) {
     return ListTile(
-      title: Text(todoText),
-      onTap: () => _promptRemoveTodoItem(index),
+      title: Text(username),
+      onTap: () => _promptRemove(index),
     );
   }
 
@@ -58,31 +58,31 @@ class TodoListState extends State<TodoList> {
       appBar: AppBar(
         title: Text(appTitle)
       ),
-      body: _buildTodoList(),
+      body: _buildList(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _pushAddTodoScreen,
-        tooltip: 'Add task',
+        onPressed: _pushAddScreen,
+        tooltip: 'Add account',
         child: Icon(Icons.add),
       )
     );
   }
 
-  void _pushAddTodoScreen() {
+  void _pushAddScreen() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Add a new task')
+              title: Text('Add account')
             ),
             body: TextField(
               autofocus: true,
               onSubmitted: (val) {
-                _addTodoItem(val);
-                Navigator.pop(context); // Close the add todo screen
+                _add(val);
+                Navigator.pop(context); // Close screen
               },
               decoration: InputDecoration(
-                hintText: 'Enter something to do...',
+                hintText: 'username',
                 contentPadding: const EdgeInsets.all(16.0)
               ),
             )
@@ -92,22 +92,21 @@ class TodoListState extends State<TodoList> {
     );
   }
 
-  // Show an alert dialog asking the user to confirm that the task is done
-  void _promptRemoveTodoItem(int index) {
+  void _promptRemove(int index) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Mark "${_todoItems[index]}" as done?'),
+          title: Text('Remove account "${_usernames[index]}"?'),
           actions: <Widget>[
             FlatButton(
               child: Text('CANCEL'),
               onPressed: () => Navigator.of(context).pop() // Close dialog
             ),
             FlatButton(
-              child: Text('MARK AS DONE'),
+              child: Text('REMOVE'),
               onPressed: () {
-                _removeTodoItem(index);
+                _remove(index);
                 Navigator.of(context).pop(); // Close dialog
               }
             )

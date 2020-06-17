@@ -13,24 +13,27 @@ class AccountLogList extends StatefulWidget {
 }
 
 class AccountLogListState extends State<AccountLogList> {
-  List<String> _accountLogItems = [];
+  List<AccountLogItem> _accountLogItems = [];
 
   void _load() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() => _accountLogItems = (prefs.getStringList('accountLogItems/${widget.username}')) ?? []);
+    setState(() {
+      final jsonStrings = prefs.getStringList('accountLogItems/${widget.username}') ?? [];
+      _accountLogItems = jsonStrings.map((jsonString) => AccountLogItem.fromJsonString(jsonString)).toList();
+    });
   }
 
   void _save() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('accountLogItems/${widget.username}', _accountLogItems);
+    prefs.setStringList('accountLogItems/${widget.username}', _accountLogItems.map((item) => item.toJsonString()).toList());
   }
 
   void _add(String username) {
     setState(() {
-      _accountLogItems.add(json.encode({
-        'followerCount': TwitterService().getCurrentFollowerCount(username),
-        'date': DateTime.now().toString(),
-      }));
+      _accountLogItems.add(AccountLogItem(
+        followerCount: TwitterService().getCurrentFollowerCount(username),
+        date: DateTime.now(),
+      ));
     });
     _save();
   }
@@ -46,8 +49,8 @@ class AccountLogListState extends State<AccountLogList> {
       itemBuilder: (BuildContext context, int index) {
         if (index < _accountLogItems.length) {
           return ListTile(
-            title: Text(json.decode(_accountLogItems[index])['date']),
-            trailing: Text('${json.decode(_accountLogItems[index])["followerCount"]}'),
+            title: Text(_accountLogItems[index].date.toString()),
+            trailing: Text(_accountLogItems[index].followerCount.toString()),
           );
         }
         return null; // cannot be void
@@ -76,4 +79,13 @@ class AccountLogItem {
   final DateTime date;
 
   AccountLogItem({this.followerCount, this.date});
+
+  AccountLogItem.fromJsonString(String jsonString) : this(
+    followerCount: json.decode(jsonString)['followerCount'],
+    date: DateTime.parse(json.decode(jsonString)['date'])
+  );
+
+  String toJsonString() {
+    return json.encode({'followerCount': followerCount, 'date': date.toString()});
+  }
 }

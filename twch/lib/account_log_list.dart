@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountLogList extends StatefulWidget {
-  String _username;
+  final String username;
 
-  AccountLogList(String username) {
-    _username = username;
-  }
+  AccountLogList({Key key, this.username}) : super(key: key);
 
   @override
   createState() => AccountLogListState();
@@ -24,9 +22,9 @@ class AccountLogListState extends State<AccountLogList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Account log list for ${widget._username}')
+        title: Text('Account log list for ${widget.username}')
       ),
-      body: Text(widget._username),
+      body: Text(widget.username),
     );
   }
 }

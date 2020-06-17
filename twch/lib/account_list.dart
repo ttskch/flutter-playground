@@ -139,7 +139,7 @@ class AccountListState extends State<AccountList> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return AccountLogList(username);
+          return AccountLogList(username: username);
         }
       )
     );

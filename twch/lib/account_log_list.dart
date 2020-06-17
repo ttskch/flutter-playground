@@ -51,7 +51,7 @@ class AccountLogListState extends State<AccountLogList> {
         if (index < _accountLogItems.length) {
           return ListTile(
             title: Text(DateFormat('yyyy/MM/dd HH:mm:ss').format(_accountLogItems[index].date)),
-            trailing: Text(_accountLogItems[index].followerCount.toString()),
+            trailing: Text('フォロワー数：${_accountLogItems[index].followerCount}'),
           );
         }
         return null; // cannot be void

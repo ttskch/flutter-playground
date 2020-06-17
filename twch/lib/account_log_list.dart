@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'twitter-service.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class AccountLogList extends StatefulWidget {
   final String username;
@@ -49,7 +50,7 @@ class AccountLogListState extends State<AccountLogList> {
       itemBuilder: (BuildContext context, int index) {
         if (index < _accountLogItems.length) {
           return ListTile(
-            title: Text(_accountLogItems[index].date.toString()),
+            title: Text(DateFormat('yyyy/MM/dd HH:mm:ss').format(_accountLogItems[index].date)),
             trailing: Text(_accountLogItems[index].followerCount.toString()),
           );
         }

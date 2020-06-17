@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'twitter-service.dart';
+import 'dart:convert';
 
 class AccountLogList extends StatefulWidget {
   final String username;
@@ -12,20 +13,32 @@ class AccountLogList extends StatefulWidget {
 }
 
 class AccountLogListState extends State<AccountLogList> {
-  List<AccountLogItem> _accountLogItems = [];
+  List<String> _accountLogItems = [];
+
+  void _load() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() => _accountLogItems = (prefs.getStringList('accountLogItems/${widget.username}')) ?? []);
+  }
+
+  void _save() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('accountLogItems/${widget.username}', _accountLogItems);
+  }
 
   void _add(String username) {
     setState(() {
-      _accountLogItems.add(AccountLogItem(
-        followerCount: TwitterService().getCurrentFollowerCount(username),
-        date: DateTime.now()
-      ));
+      _accountLogItems.add(json.encode({
+        'followerCount': TwitterService().getCurrentFollowerCount(username),
+        'date': DateTime.now().toString(),
+      }));
     });
+    _save();
   }
 
   @override
   void initState() {
     super.initState();
+    _load();
   }
 
   Widget _buildList() {
@@ -33,8 +46,8 @@ class AccountLogListState extends State<AccountLogList> {
       itemBuilder: (BuildContext context, int index) {
         if (index < _accountLogItems.length) {
           return ListTile(
-            title: Text(_accountLogItems[index].date.toString()),
-            trailing: Text('${_accountLogItems[index].followerCount}'),
+            title: Text(json.decode(_accountLogItems[index])['date']),
+            trailing: Text('${json.decode(_accountLogItems[index])["followerCount"]}'),
           );
         }
         return null; // cannot be void

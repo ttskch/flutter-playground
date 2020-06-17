@@ -50,8 +50,8 @@ class AccountLogListState extends State<AccountLogList> {
       itemBuilder: (BuildContext context, int index) {
         if (index < _accountLogItems.length) {
           return ListTile(
-            title: Text(DateFormat('yyyy/MM/dd HH:mm:ss').format(_accountLogItems[index].date)),
-            trailing: Text('フォロワー数：${_accountLogItems[index].followerCount}'),
+            title: Text(DateFormat('yyyy/MM/dd HH:mm:ss').format(_accountLogItems.reversed.toList()[index].date)),
+            trailing: Text('フォロワー数：${_accountLogItems.reversed.toList()[index].followerCount}'),
           );
         }
         return null; // cannot be void

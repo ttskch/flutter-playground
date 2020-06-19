@@ -29,10 +29,11 @@ class AccountLogListState extends State<AccountLogList> {
     prefs.setStringList('accountLogItems/${widget.username}', _accountLogItems.map((item) => item.toJsonString()).toList());
   }
 
-  void _add(String username) {
+  void _add(String username) async {
+    int followerCount = await TwitterService().getCurrentFollowerCount(username);
     setState(() {
       _accountLogItems.add(AccountLogItem(
-        followerCount: TwitterService().getCurrentFollowerCount(username),
+        followerCount: followerCount,
         date: DateTime.now(),
       ));
     });

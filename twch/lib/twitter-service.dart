@@ -23,7 +23,7 @@ class TwitterService {
     var res = await req;
 
     if (res.statusCode ~/ 100 != 2) {
-      throw new Exception('[${res.statusCode}] ${res.body}');
+      throw Exception('[${res.statusCode}] ${res.body}');
     }
 
     return json.decode(res.body)['followers_count'];

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'account_log_list.dart';
+import 'storage.dart';
 
 class AccountList extends StatefulWidget {
   @override
@@ -25,6 +26,7 @@ class AccountListState extends State<AccountList> {
       setState(() {
         _usernames.add(username);
         _save();
+        Storage.addAccount(username);
       });
     }
   }

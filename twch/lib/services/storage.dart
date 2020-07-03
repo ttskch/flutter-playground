@@ -3,8 +3,10 @@ import 'package:twch/models/account.dart';
 
 class Storage {
   static Future<List<Account>> getAccounts() async {
-    QuerySnapshot snapshot =
-        await Firestore.instance.collection('accounts').getDocuments();
+    QuerySnapshot snapshot = await Firestore.instance
+        .collection('accounts')
+        .orderBy('createdAt')
+        .getDocuments();
     List<DocumentSnapshot> docs = snapshot.documents;
 
     return docs

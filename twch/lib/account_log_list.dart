@@ -17,37 +17,29 @@ class AccountLogList extends StatefulWidget {
 class _AccountLogListState extends State<AccountLogList> {
   List<AccountLog> _accountLogs = [];
 
-  void _load() async {
-    final accountLogs = await Storage.getAccountLogs(widget.account);
-    setState(() {
-      _accountLogs = accountLogs;
+  void _load() {
+    Storage.getAccountLogs(widget.account, (List<AccountLog> accountLogs) {
+      if (mounted) {
+        setState(() => _accountLogs = accountLogs);
+      }
     });
   }
 
   void _add() async {
     final int followerCount =
         await TwitterService().getCurrentFollowerCount(widget.account.username);
-    final AccountLog newAccountLog = await Storage.addAccountLog(
+    Storage.addAccountLog(
       account: widget.account,
       followerCount: followerCount,
     );
-    setState(() {
-      _accountLogs.add(newAccountLog);
-    });
   }
 
-  void _remove(int index, AccountLog accountLog) {
-    setState(() {
-      _accountLogs.removeAt(index);
-      Storage.deleteAccountLog(accountLog);
-    });
+  void _remove(AccountLog accountLog) {
+    Storage.deleteAccountLog(accountLog);
   }
 
   void _removeAll() {
-    setState(() {
-      _accountLogs = [];
-      Storage.deleteAccountLogs(widget.account);
-    });
+    Storage.deleteAccountLogs(widget.account);
   }
 
   @override
@@ -83,8 +75,10 @@ class _AccountLogListState extends State<AccountLogList> {
       appBar: AppBar(
           title: Text('Account log list for ${widget.account.username}')),
       body: _buildList(),
-      floatingActionButton: Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
             margin: EdgeInsets.only(right: 12),
             child: FloatingActionButton(
               heroTag: 'clear',
@@ -92,35 +86,40 @@ class _AccountLogListState extends State<AccountLogList> {
               tooltip: 'Clear',
               child: Icon(Icons.delete),
               backgroundColor: Colors.red[500],
-            )),
-        FloatingActionButton(
-          heroTag: 'earn_log',
-          onPressed: () => _add(),
-          tooltip: 'Earn log',
-          child: Icon(Icons.check),
-        )
-      ]),
+            ),
+          ),
+          FloatingActionButton(
+            heroTag: 'earn_log',
+            onPressed: () => _add(),
+            tooltip: 'Earn log',
+            child: Icon(Icons.check),
+          ),
+        ],
+      ),
     );
   }
 
   void _promptRemove(int index, AccountLog accountLog) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              title: Text('Remove account log?'),
-              actions: <Widget>[
-                FlatButton(
-                    child: Text('CANCEL'),
-                    onPressed: () => Navigator.of(context).pop() // Close dialog
-                    ),
-                FlatButton(
-                    child: Text('REMOVE'),
-                    onPressed: () {
-                      _remove(index, accountLog);
-                      Navigator.of(context).pop(); // Close dialog
-                    })
-              ]);
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Remove account log?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('CANCEL'),
+              onPressed: () => Navigator.of(context).pop(), // Close dialog
+            ),
+            FlatButton(
+              child: Text('REMOVE'),
+              onPressed: () {
+                _remove(accountLog);
+                Navigator.of(context).pop(); // Close dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

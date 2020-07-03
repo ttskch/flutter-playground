@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'twitter-service.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'models/account_log.dart';
+import 'services/twitter_service.dart';
 
 class AccountLogList extends StatefulWidget {
   final String username;
@@ -14,15 +14,15 @@ class AccountLogList extends StatefulWidget {
 }
 
 class AccountLogListState extends State<AccountLogList> {
-  List<AccountLogItem> _accountLogItems = [];
+  List<AccountLog> _accountLogs = [];
 
   void _load() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       final jsonStrings =
           prefs.getStringList('accountLogItems/${widget.username}') ?? [];
-      _accountLogItems = jsonStrings
-          .map((jsonString) => AccountLogItem.fromJsonString(jsonString))
+      _accountLogs = jsonStrings
+          .map((jsonString) => AccountLog.fromJsonString(jsonString))
           .toList();
     });
   }
@@ -30,14 +30,14 @@ class AccountLogListState extends State<AccountLogList> {
   void _save() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList('accountLogItems/${widget.username}',
-        _accountLogItems.map((item) => item.toJsonString()).toList());
+        _accountLogs.map((item) => item.toJsonString()).toList());
   }
 
   void _add(String username) async {
     int followerCount =
         await TwitterService().getCurrentFollowerCount(username);
     setState(() {
-      _accountLogItems.add(AccountLogItem(
+      _accountLogs.add(AccountLog(
         followerCount: followerCount,
         date: DateTime.now(),
       ));
@@ -54,12 +54,12 @@ class AccountLogListState extends State<AccountLogList> {
   Widget _buildList() {
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
-        if (index < _accountLogItems.length) {
+        if (index < _accountLogs.length) {
           return ListTile(
             title: Text(DateFormat('yyyy/MM/dd HH:mm:ss')
-                .format(_accountLogItems.reversed.toList()[index].date)),
+                .format(_accountLogs.reversed.toList()[index].date)),
             trailing: Text(
-                'フォロワー数：${_accountLogItems.reversed.toList()[index].followerCount}'),
+                'フォロワー数：${_accountLogs.reversed.toList()[index].followerCount}'),
           );
         }
         return null; // cannot be void
@@ -78,22 +78,5 @@ class AccountLogListState extends State<AccountLogList> {
         child: Icon(Icons.check),
       ),
     );
-  }
-}
-
-class AccountLogItem {
-  final int followerCount;
-  final DateTime date;
-
-  AccountLogItem({this.followerCount, this.date});
-
-  AccountLogItem.fromJsonString(String jsonString)
-      : this(
-            followerCount: json.decode(jsonString)['followerCount'],
-            date: DateTime.parse(json.decode(jsonString)['date']));
-
-  String toJsonString() {
-    return json
-        .encode({'followerCount': followerCount, 'date': date.toString()});
   }
 }

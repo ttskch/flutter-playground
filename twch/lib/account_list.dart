@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'account_log_list.dart';
-import 'storage.dart';
+import 'services/storage.dart';
 
 class AccountList extends StatefulWidget {
   @override

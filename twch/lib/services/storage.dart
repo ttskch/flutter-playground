@@ -2,34 +2,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twch/models/account.dart';
 import 'package:twch/models/account_log.dart';
 
+typedef AccountsListenCallback = void Function(List<Account>);
+
 class Storage {
-  static Future<List<Account>> getAccounts() async {
-    QuerySnapshot ss = await Firestore.instance
+  static void getAccounts(AccountsListenCallback callback) {
+    Firestore.instance
         .collection('accounts')
         .orderBy('createdAt')
-        .getDocuments();
-    List<DocumentSnapshot> docs = ss.documents;
-
-    return docs
-        .map((doc) =>
-            Account(id: doc.documentID, username: doc.data['username']))
-        .toList();
+        .snapshots()
+        .listen((QuerySnapshot ss) {
+      List<DocumentSnapshot> docs = ss.documents;
+      final accounts = docs.map((doc) {
+        return Account(
+          id: doc.documentID,
+          username: doc.data['username'],
+          // 新規作成要求直後に一度createdAtがnullの状態で呼ばれて、永続化完了後にcreatedAtに値が入った状態で再度呼ばれる.
+          createdAt: (doc.data['createdAt'] ?? Timestamp.now()).toDate(),
+        );
+      }).toList();
+      callback(accounts);
+    });
   }
 
-  static Future<Account> addAccount(String username) async {
-    DocumentReference docRef =
-        await Firestore.instance.collection('accounts').add({
+  static void addAccount(String username) {
+    Firestore.instance.collection('accounts').add({
       'username': username,
       'createdAt': FieldValue.serverTimestamp(),
     });
-
-    DocumentSnapshot doc = await docRef.get();
-
-    return Account(
-      id: doc.documentID,
-      username: username,
-      createdAt: doc.data['createdAt'].toDate(),
-    );
   }
 
   static void deleteAccount(Account account) {

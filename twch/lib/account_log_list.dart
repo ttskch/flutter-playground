@@ -33,9 +33,9 @@ class _AccountLogListState extends State<AccountLogList> {
         _accountLogs.map((item) => item.toJsonString()).toList());
   }
 
-  void _add(String username) async {
+  void _add() async {
     int followerCount =
-        await TwitterService().getCurrentFollowerCount(username);
+        await TwitterService().getCurrentFollowerCount(widget.username);
     setState(() {
       _accountLogs.add(AccountLog(
         followerCount: followerCount,
@@ -43,6 +43,20 @@ class _AccountLogListState extends State<AccountLogList> {
       ));
     });
     _save();
+  }
+
+  void _remove(int index) {
+    setState(() {
+      _accountLogs.removeAt(index);
+      _save();
+    });
+  }
+
+  void _removeAll() {
+    setState(() {
+      _accountLogs = [];
+      _save();
+    });
   }
 
   @override
@@ -56,10 +70,15 @@ class _AccountLogListState extends State<AccountLogList> {
       itemBuilder: (BuildContext context, int index) {
         if (index < _accountLogs.length) {
           return ListTile(
-            title: Text(DateFormat('yyyy/MM/dd HH:mm:ss')
-                .format(_accountLogs.reversed.toList()[index].date)),
-            trailing: Text(
+            title: Text(
                 'フォロワー数：${_accountLogs.reversed.toList()[index].followerCount}'),
+            subtitle: Text(DateFormat('yyyy/MM/dd HH:mm:ss')
+                .format(_accountLogs.reversed.toList()[index].date)),
+            trailing: IconButton(
+              icon: Icon(Icons.delete),
+              color: Colors.red[500],
+              onPressed: () => _promptRemove(index),
+            ),
           );
         }
         return null; // cannot be void
@@ -72,11 +91,44 @@ class _AccountLogListState extends State<AccountLogList> {
     return Scaffold(
       appBar: AppBar(title: Text('Account log list for ${widget.username}')),
       body: _buildList(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _add(widget.username),
-        tooltip: 'Add account',
-        child: Icon(Icons.check),
-      ),
+      floatingActionButton: Row(mainAxisSize: MainAxisSize.min, children: [
+        Container(
+            margin: EdgeInsets.only(right: 12),
+            child: FloatingActionButton(
+              heroTag: 'clear',
+              onPressed: () => _removeAll(),
+              tooltip: 'Clear',
+              child: Icon(Icons.delete),
+              backgroundColor: Colors.red[500],
+            )),
+        FloatingActionButton(
+          heroTag: 'earn_log',
+          onPressed: () => _add(),
+          tooltip: 'Earn log',
+          child: Icon(Icons.check),
+        )
+      ]),
     );
+  }
+
+  void _promptRemove(int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text('Remove account log?'),
+              actions: <Widget>[
+                FlatButton(
+                    child: Text('CANCEL'),
+                    onPressed: () => Navigator.of(context).pop() // Close dialog
+                    ),
+                FlatButton(
+                    child: Text('REMOVE'),
+                    onPressed: () {
+                      _remove(index);
+                      Navigator.of(context).pop(); // Close dialog
+                    })
+              ]);
+        });
   }
 }

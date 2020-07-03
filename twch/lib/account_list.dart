@@ -53,7 +53,7 @@ class _AccountListState extends State<AccountList> {
         color: Colors.red[500],
         onPressed: () => _promptRemove(index, account),
       ),
-      onTap: () => _pushAccountLogListScreen(account.username),
+      onTap: () => _pushAccountLogListScreen(account),
     );
   }
 
@@ -114,10 +114,10 @@ class _AccountListState extends State<AccountList> {
         });
   }
 
-  void _pushAccountLogListScreen(String username) {
+  void _pushAccountLogListScreen(Account account) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) {
-      return AccountLogList(username: username);
+      return AccountLogList(account: account);
     }));
   }
 }

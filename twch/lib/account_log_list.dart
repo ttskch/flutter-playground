@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'models/account.dart';
 import 'models/account_log.dart';
 import 'services/twitter_service.dart';
+import 'services/storage.dart';
 
 class AccountLogList extends StatefulWidget {
-  final String username;
+  final Account account;
 
-  AccountLogList({Key key, this.username}) : super(key: key);
+  AccountLogList({Key key, this.account}) : super(key: key);
 
   @override
   createState() => _AccountLogListState();
@@ -17,45 +18,35 @@ class _AccountLogListState extends State<AccountLogList> {
   List<AccountLog> _accountLogs = [];
 
   void _load() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final accountLogs = await Storage.getAccountLogs(widget.account);
     setState(() {
-      final jsonStrings =
-          prefs.getStringList('accountLogs/${widget.username}') ?? [];
-      _accountLogs = jsonStrings
-          .map((jsonString) => AccountLog.fromJsonString(jsonString))
-          .toList();
+      _accountLogs = accountLogs;
     });
-  }
-
-  void _save() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('accountLogs/${widget.username}',
-        _accountLogs.map((item) => item.toJsonString()).toList());
   }
 
   void _add() async {
-    int followerCount =
-        await TwitterService().getCurrentFollowerCount(widget.username);
-    setState(() {
-      _accountLogs.add(AccountLog(
+    final int followerCount =
+        await TwitterService().getCurrentFollowerCount(widget.account.username);
+    final AccountLog newAccountLog = await Storage.addAccountLog(
+        account: widget.account,
         followerCount: followerCount,
-        date: DateTime.now(),
-      ));
+        dateTime: DateTime.now());
+    setState(() {
+      _accountLogs.add(newAccountLog);
     });
-    _save();
   }
 
-  void _remove(int index) {
+  void _remove(int index, AccountLog accountLog) {
     setState(() {
       _accountLogs.removeAt(index);
-      _save();
+      Storage.deleteAccountLog(accountLog);
     });
   }
 
   void _removeAll() {
     setState(() {
       _accountLogs = [];
-      _save();
+      Storage.deleteAccountLogs(widget.account);
     });
   }
 
@@ -73,11 +64,11 @@ class _AccountLogListState extends State<AccountLogList> {
             title: Text(
                 'フォロワー数：${_accountLogs.reversed.toList()[index].followerCount}'),
             subtitle: Text(DateFormat('yyyy/MM/dd HH:mm:ss')
-                .format(_accountLogs.reversed.toList()[index].date)),
+                .format(_accountLogs.reversed.toList()[index].dateTime)),
             trailing: IconButton(
               icon: Icon(Icons.delete),
               color: Colors.red[500],
-              onPressed: () => _promptRemove(index),
+              onPressed: () => _promptRemove(index, _accountLogs[index]),
             ),
           );
         }
@@ -89,7 +80,8 @@ class _AccountLogListState extends State<AccountLogList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Account log list for ${widget.username}')),
+      appBar: AppBar(
+          title: Text('Account log list for ${widget.account.username}')),
       body: _buildList(),
       floatingActionButton: Row(mainAxisSize: MainAxisSize.min, children: [
         Container(
@@ -111,7 +103,7 @@ class _AccountLogListState extends State<AccountLogList> {
     );
   }
 
-  void _promptRemove(int index) {
+  void _promptRemove(int index, AccountLog accountLog) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -125,7 +117,7 @@ class _AccountLogListState extends State<AccountLogList> {
                 FlatButton(
                     child: Text('REMOVE'),
                     onPressed: () {
-                      _remove(index);
+                      _remove(index, accountLog);
                       Navigator.of(context).pop(); // Close dialog
                     })
               ]);

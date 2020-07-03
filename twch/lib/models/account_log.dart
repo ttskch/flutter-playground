@@ -1,18 +1,19 @@
 import 'dart:convert';
 
 class AccountLog {
+  final String id;
   final int followerCount;
-  final DateTime date;
+  final DateTime dateTime;
 
-  AccountLog({this.followerCount, this.date});
+  AccountLog({this.id, this.followerCount, this.dateTime});
 
   AccountLog.fromJsonString(String jsonString)
       : this(
             followerCount: json.decode(jsonString)['followerCount'],
-            date: DateTime.parse(json.decode(jsonString)['date']));
+            dateTime: DateTime.parse(json.decode(jsonString)['dateTime']));
 
   String toJsonString() {
     return json
-        .encode({'followerCount': followerCount, 'date': date.toString()});
+        .encode({'followerCount': followerCount, 'date': dateTime.toString()});
   }
 }

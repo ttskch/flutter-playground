@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'account_log_list.dart';
 import 'models/account.dart';
 import 'services/storage.dart';
@@ -48,6 +49,8 @@ class _AccountListState extends State<AccountList> {
   Widget _buildItem(Account account, int index) {
     return ListTile(
       title: Text(account.username),
+      subtitle:
+          Text(DateFormat('yyyy/MM/dd HH:mm:ss').format(account.createdAt)),
       trailing: IconButton(
         icon: Icon(Icons.delete),
         color: Colors.red[500],

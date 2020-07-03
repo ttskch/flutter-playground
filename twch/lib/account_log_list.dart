@@ -28,9 +28,9 @@ class _AccountLogListState extends State<AccountLogList> {
     final int followerCount =
         await TwitterService().getCurrentFollowerCount(widget.account.username);
     final AccountLog newAccountLog = await Storage.addAccountLog(
-        account: widget.account,
-        followerCount: followerCount,
-        dateTime: DateTime.now());
+      account: widget.account,
+      followerCount: followerCount,
+    );
     setState(() {
       _accountLogs.add(newAccountLog);
     });
@@ -64,7 +64,7 @@ class _AccountLogListState extends State<AccountLogList> {
             title: Text(
                 'フォロワー数：${_accountLogs.reversed.toList()[index].followerCount}'),
             subtitle: Text(DateFormat('yyyy/MM/dd HH:mm:ss')
-                .format(_accountLogs.reversed.toList()[index].dateTime)),
+                .format(_accountLogs.reversed.toList()[index].createdAt)),
             trailing: IconButton(
               icon: Icon(Icons.delete),
               color: Colors.red[500],

@@ -4,11 +4,11 @@ import 'package:twch/models/account_log.dart';
 
 class Storage {
   static Future<List<Account>> getAccounts() async {
-    QuerySnapshot snapshot = await Firestore.instance
+    QuerySnapshot ss = await Firestore.instance
         .collection('accounts')
         .orderBy('createdAt')
         .getDocuments();
-    List<DocumentSnapshot> docs = snapshot.documents;
+    List<DocumentSnapshot> docs = ss.documents;
 
     return docs
         .map((doc) =>
@@ -17,13 +17,19 @@ class Storage {
   }
 
   static Future<Account> addAccount(String username) async {
-    DocumentReference doc =
+    DocumentReference docRef =
         await Firestore.instance.collection('accounts').add({
       'username': username,
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    return Account(id: doc.documentID, username: username);
+    DocumentSnapshot doc = await docRef.get();
+
+    return Account(
+      id: doc.documentID,
+      username: username,
+      createdAt: doc.data['createdAt'].toDate(),
+    );
   }
 
   static void deleteAccount(Account account) {
@@ -31,39 +37,46 @@ class Storage {
   }
 
   static Future<List<AccountLog>> getAccountLogs(Account account) async {
-    final DocumentReference accountReference =
+    final DocumentReference accountRef =
         Firestore.instance.collection('accounts').document(account.id);
 
-    QuerySnapshot snapshot = await Firestore.instance
+    QuerySnapshot ss = await Firestore.instance
         .collection('accountLogs')
-        .where('account', isEqualTo: accountReference)
+        .where('account', isEqualTo: accountRef)
         .orderBy('createdAt')
         .getDocuments();
-    List<DocumentSnapshot> docs = snapshot.documents;
+    List<DocumentSnapshot> docs = ss.documents;
 
     return docs
         .map((doc) => AccountLog(
-            id: doc.documentID,
-            followerCount: doc.data['followerCount'],
-            dateTime: doc.data['dateTime'].toDate()))
+              id: doc.documentID,
+              followerCount: doc.data['followerCount'],
+              createdAt: doc.data['createdAt'].toDate(),
+            ))
         .toList();
   }
 
-  static Future<AccountLog> addAccountLog(
-      {Account account, int followerCount, DateTime dateTime}) async {
-    final DocumentReference accountReference =
+  static Future<AccountLog> addAccountLog({
+    Account account,
+    int followerCount,
+  }) async {
+    final DocumentReference accountRef =
         Firestore.instance.collection('accounts').document(account.id);
 
-    DocumentReference doc =
+    DocumentReference docRef =
         await Firestore.instance.collection('accountLogs').add({
-      'account': accountReference,
+      'account': accountRef,
       'followerCount': followerCount,
-      'dateTime': dateTime,
       'createdAt': FieldValue.serverTimestamp(),
     });
 
+    DocumentSnapshot doc = await docRef.get();
+
     return AccountLog(
-        id: doc.documentID, followerCount: followerCount, dateTime: dateTime);
+      id: doc.documentID,
+      followerCount: followerCount,
+      createdAt: doc.data['createdAt'].toDate(),
+    );
   }
 
   static void deleteAccountLog(AccountLog accountLog) {
@@ -74,15 +87,14 @@ class Storage {
   }
 
   static void deleteAccountLogs(Account account) async {
-    final DocumentReference accountReference =
+    final DocumentReference accountRef =
         Firestore.instance.collection('accounts').document(account.id);
 
-    QuerySnapshot snapshot = await Firestore.instance
+    QuerySnapshot ss = await Firestore.instance
         .collection('accountLogs')
-        .where('account', isEqualTo: accountReference)
+        .where('account', isEqualTo: accountRef)
         .getDocuments();
 
-    snapshot.documents
-        .forEach((documentSnapshot) => documentSnapshot.reference.delete());
+    ss.documents.forEach((doc) => doc.reference.delete());
   }
 }

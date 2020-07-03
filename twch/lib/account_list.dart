@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'account_log_list.dart';
 import 'models/account.dart';
 import 'services/storage.dart';
@@ -13,35 +12,25 @@ class _AccountListState extends State<AccountList> {
   List<Account> _accounts = [];
 
   void _load() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<Account> accounts = await Storage.getAccounts();
     setState(() {
-      final jsonStrings = prefs.getStringList('accounts') ?? [];
-      _accounts = jsonStrings
-          .map((jsonString) => Account.fromJsonString(jsonString))
-          .toList();
+      _accounts = accounts;
     });
-  }
-
-  void _save() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList(
-        'accounts', _accounts.map((item) => item.toJsonString()).toList());
   }
 
   void _add(String username) async {
     if (username.length > 0) {
-      Account newAccount = await Storage.addAccount(username);
+      final Account newAccount = await Storage.addAccount(username);
       setState(() {
         _accounts.add(newAccount);
-        _save();
       });
     }
   }
 
-  void _remove(int index) {
+  void _remove(int index, Account account) {
     setState(() {
       _accounts.removeAt(index);
-      _save();
+      Storage.deleteAccount(account);
     });
   }
 
@@ -62,7 +51,7 @@ class _AccountListState extends State<AccountList> {
       trailing: IconButton(
         icon: Icon(Icons.delete),
         color: Colors.red[500],
-        onPressed: () => _promptRemove(index),
+        onPressed: () => _promptRemove(index, account),
       ),
       onTap: () => _pushAccountLogListScreen(account.username),
     );
@@ -104,7 +93,7 @@ class _AccountListState extends State<AccountList> {
     }));
   }
 
-  void _promptRemove(int index) {
+  void _promptRemove(int index, Account account) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -118,7 +107,7 @@ class _AccountListState extends State<AccountList> {
                 FlatButton(
                     child: Text('REMOVE'),
                     onPressed: () {
-                      _remove(index);
+                      _remove(index, account);
                       Navigator.of(context).pop(); // Close dialog
                     })
               ]);

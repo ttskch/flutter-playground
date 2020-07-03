@@ -75,9 +75,9 @@ class _AccountListState extends State<AccountList> {
   }
 
   void _pushAddScreen() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      return Scaffold(
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (BuildContext context) {
+        return Scaffold(
           appBar: AppBar(title: Text('Add account')),
           body: TextField(
             autofocus: true,
@@ -86,10 +86,13 @@ class _AccountListState extends State<AccountList> {
               Navigator.pop(context); // Close screen
             },
             decoration: InputDecoration(
-                hintText: 'username',
-                contentPadding: const EdgeInsets.all(16.0)),
-          ));
-    }));
+              hintText: 'username',
+              contentPadding: const EdgeInsets.all(16.0),
+            ),
+          ),
+        );
+      }),
+    );
   }
 
   void _promptRemove(Account account) {

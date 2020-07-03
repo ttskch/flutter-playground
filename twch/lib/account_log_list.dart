@@ -73,7 +73,8 @@ class _AccountLogListState extends State<AccountLogList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Account log list for ${widget.account.username}')),
+        title: Text('Account log list for ${widget.account.username}'),
+      ),
       body: _buildList(),
       floatingActionButton: Row(
         mainAxisSize: MainAxisSize.min,

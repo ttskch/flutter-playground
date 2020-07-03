@@ -19,18 +19,23 @@ class AccountLogListState extends State<AccountLogList> {
   void _load() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      final jsonStrings = prefs.getStringList('accountLogItems/${widget.username}') ?? [];
-      _accountLogItems = jsonStrings.map((jsonString) => AccountLogItem.fromJsonString(jsonString)).toList();
+      final jsonStrings =
+          prefs.getStringList('accountLogItems/${widget.username}') ?? [];
+      _accountLogItems = jsonStrings
+          .map((jsonString) => AccountLogItem.fromJsonString(jsonString))
+          .toList();
     });
   }
 
   void _save() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('accountLogItems/${widget.username}', _accountLogItems.map((item) => item.toJsonString()).toList());
+    prefs.setStringList('accountLogItems/${widget.username}',
+        _accountLogItems.map((item) => item.toJsonString()).toList());
   }
 
   void _add(String username) async {
-    int followerCount = await TwitterService().getCurrentFollowerCount(username);
+    int followerCount =
+        await TwitterService().getCurrentFollowerCount(username);
     setState(() {
       _accountLogItems.add(AccountLogItem(
         followerCount: followerCount,
@@ -51,8 +56,10 @@ class AccountLogListState extends State<AccountLogList> {
       itemBuilder: (BuildContext context, int index) {
         if (index < _accountLogItems.length) {
           return ListTile(
-            title: Text(DateFormat('yyyy/MM/dd HH:mm:ss').format(_accountLogItems.reversed.toList()[index].date)),
-            trailing: Text('フォロワー数：${_accountLogItems.reversed.toList()[index].followerCount}'),
+            title: Text(DateFormat('yyyy/MM/dd HH:mm:ss')
+                .format(_accountLogItems.reversed.toList()[index].date)),
+            trailing: Text(
+                'フォロワー数：${_accountLogItems.reversed.toList()[index].followerCount}'),
           );
         }
         return null; // cannot be void
@@ -63,9 +70,7 @@ class AccountLogListState extends State<AccountLogList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Account log list for ${widget.username}')
-      ),
+      appBar: AppBar(title: Text('Account log list for ${widget.username}')),
       body: _buildList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _add(widget.username),
@@ -82,12 +87,13 @@ class AccountLogItem {
 
   AccountLogItem({this.followerCount, this.date});
 
-  AccountLogItem.fromJsonString(String jsonString) : this(
-    followerCount: json.decode(jsonString)['followerCount'],
-    date: DateTime.parse(json.decode(jsonString)['date'])
-  );
+  AccountLogItem.fromJsonString(String jsonString)
+      : this(
+            followerCount: json.decode(jsonString)['followerCount'],
+            date: DateTime.parse(json.decode(jsonString)['date']));
 
   String toJsonString() {
-    return json.encode({'followerCount': followerCount, 'date': date.toString()});
+    return json
+        .encode({'followerCount': followerCount, 'date': date.toString()});
   }
 }

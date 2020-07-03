@@ -70,74 +70,58 @@ class AccountListState extends State<AccountList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Account list')
-      ),
-      body: _buildList(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _pushAddScreen,
-        tooltip: 'Add account',
-        child: Icon(Icons.add),
-      )
-    );
+        appBar: AppBar(title: Text('Account list')),
+        body: _buildList(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _pushAddScreen,
+          tooltip: 'Add account',
+          child: Icon(Icons.add),
+        ));
   }
 
   void _pushAddScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Add account')
-            ),
-            body: TextField(
-              autofocus: true,
-              onSubmitted: (val) {
-                _add(val);
-                Navigator.pop(context); // Close screen
-              },
-              decoration: InputDecoration(
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return Scaffold(
+          appBar: AppBar(title: Text('Add account')),
+          body: TextField(
+            autofocus: true,
+            onSubmitted: (val) {
+              _add(val);
+              Navigator.pop(context); // Close screen
+            },
+            decoration: InputDecoration(
                 hintText: 'username',
-                contentPadding: const EdgeInsets.all(16.0)
-              ),
-            )
-          );
-        }
-      )
-    );
+                contentPadding: const EdgeInsets.all(16.0)),
+          ));
+    }));
   }
 
   void _promptRemove(int index) {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Remove account "${_usernames[index]}"?'),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('CANCEL'),
-              onPressed: () => Navigator.of(context).pop() // Close dialog
-            ),
-            FlatButton(
-              child: Text('REMOVE'),
-              onPressed: () {
-                _remove(index);
-                Navigator.of(context).pop(); // Close dialog
-              }
-            )
-          ]
-        );
-      }
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text('Remove account "${_usernames[index]}"?'),
+              actions: <Widget>[
+                FlatButton(
+                    child: Text('CANCEL'),
+                    onPressed: () => Navigator.of(context).pop() // Close dialog
+                    ),
+                FlatButton(
+                    child: Text('REMOVE'),
+                    onPressed: () {
+                      _remove(index);
+                      Navigator.of(context).pop(); // Close dialog
+                    })
+              ]);
+        });
   }
 
   void _pushAccountLogListScreen(String username) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return AccountLogList(username: username);
-        }
-      )
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      return AccountLogList(username: username);
+    }));
   }
 }

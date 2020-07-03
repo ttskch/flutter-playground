@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'account_log_list.dart';
+import 'models/account.dart';
 import 'services/storage.dart';
 
 class AccountList extends StatefulWidget {
@@ -9,31 +10,38 @@ class AccountList extends StatefulWidget {
 }
 
 class AccountListState extends State<AccountList> {
-  List<String> _usernames = [];
+  List<Account> _accounts = [];
 
   void _load() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() => _usernames = (prefs.getStringList('usernames')) ?? []);
+    setState(() {
+      final jsonStrings = prefs.getStringList('accounts') ?? [];
+      _accounts = jsonStrings
+          .map((jsonString) => Account.fromJsonString(jsonString))
+          .toList();
+    });
   }
 
   void _save() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('usernames', _usernames);
+    prefs.setStringList(
+        'accounts', _accounts.map((item) => item.toJsonString()).toList());
   }
 
   void _add(String username) {
     if (username.length > 0) {
+      Account newAccount = Account(username: username);
       setState(() {
-        _usernames.add(username);
+        _accounts.add(newAccount);
         _save();
-        Storage.addAccount(username);
+        Storage.addAccount(newAccount);
       });
     }
   }
 
   void _remove(int index) {
     setState(() {
-      _usernames.removeAt(index);
+      _accounts.removeAt(index);
       _save();
     });
   }
@@ -41,23 +49,23 @@ class AccountListState extends State<AccountList> {
   Widget _buildList() {
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
-        if (index < _usernames.length) {
-          return _buildItem(_usernames[index], index);
+        if (index < _accounts.length) {
+          return _buildItem(_accounts[index], index);
         }
         return null; // cannot be void
       },
     );
   }
 
-  Widget _buildItem(String username, int index) {
+  Widget _buildItem(Account account, int index) {
     return ListTile(
-      title: Text(username),
+      title: Text(account.username),
       trailing: IconButton(
         icon: Icon(Icons.delete),
         color: Colors.red[500],
         onPressed: () => _promptRemove(index),
       ),
-      onTap: () => _pushAccountLogListScreen(username),
+      onTap: () => _pushAccountLogListScreen(account.username),
     );
   }
 
@@ -102,7 +110,7 @@ class AccountListState extends State<AccountList> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              title: Text('Remove account "${_usernames[index]}"?'),
+              title: Text('Remove account "${_accounts[index].username}"?'),
               actions: <Widget>[
                 FlatButton(
                     child: Text('CANCEL'),

@@ -20,7 +20,7 @@ class AccountLogListState extends State<AccountLogList> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       final jsonStrings =
-          prefs.getStringList('accountLogItems/${widget.username}') ?? [];
+          prefs.getStringList('accountLogs/${widget.username}') ?? [];
       _accountLogs = jsonStrings
           .map((jsonString) => AccountLog.fromJsonString(jsonString))
           .toList();
@@ -29,7 +29,7 @@ class AccountLogListState extends State<AccountLogList> {
 
   void _save() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('accountLogItems/${widget.username}',
+    prefs.setStringList('accountLogs/${widget.username}',
         _accountLogs.map((item) => item.toJsonString()).toList());
   }
 

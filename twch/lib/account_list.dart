@@ -28,13 +28,12 @@ class _AccountListState extends State<AccountList> {
         'accounts', _accounts.map((item) => item.toJsonString()).toList());
   }
 
-  void _add(String username) {
+  void _add(String username) async {
     if (username.length > 0) {
-      Account newAccount = Account(username: username);
+      Account newAccount = await Storage.addAccount(username);
       setState(() {
         _accounts.add(newAccount);
         _save();
-        Storage.addAccount(newAccount);
       });
     }
   }

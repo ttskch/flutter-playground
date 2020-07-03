@@ -6,10 +6,10 @@ import 'services/storage.dart';
 
 class AccountList extends StatefulWidget {
   @override
-  createState() => AccountListState();
+  createState() => _AccountListState();
 }
 
-class AccountListState extends State<AccountList> {
+class _AccountListState extends State<AccountList> {
   List<Account> _accounts = [];
 
   void _load() async {

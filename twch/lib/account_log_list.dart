@@ -10,10 +10,10 @@ class AccountLogList extends StatefulWidget {
   AccountLogList({Key key, this.username}) : super(key: key);
 
   @override
-  createState() => AccountLogListState();
+  createState() => _AccountLogListState();
 }
 
-class AccountLogListState extends State<AccountLogList> {
+class _AccountLogListState extends State<AccountLogList> {
   List<AccountLog> _accountLogs = [];
 
   void _load() async {

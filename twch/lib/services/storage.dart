@@ -34,6 +34,7 @@ class Storage {
 
   static void deleteAccount(Account account) {
     Firestore.instance.collection('accounts').document(account.id).delete();
+    Storage.deleteAccountLogs(account);
   }
 
   static void getAccountLogs(

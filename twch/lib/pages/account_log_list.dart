@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'models/account.dart';
-import 'models/account_log.dart';
-import 'services/twitter_service.dart';
-import 'services/storage.dart';
+import 'package:twch/models/account.dart';
+import 'package:twch/models/account_log.dart';
+import 'package:twch/services/twitter_service.dart';
+import 'package:twch/services/storage.dart';
 
 class AccountLogList extends StatefulWidget {
   final Account account;

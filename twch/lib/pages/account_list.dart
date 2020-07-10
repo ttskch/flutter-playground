@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'account_log_list.dart';
-import 'models/account.dart';
-import 'services/storage.dart';
-import 'services/auth.dart';
+import 'package:twch/pages/account_log_list.dart';
+import 'package:twch/models/account.dart';
+import 'package:twch/services/storage.dart';
+import 'package:twch/services/auth.dart';
 
 class AccountList extends StatefulWidget {
   @override
@@ -76,7 +76,7 @@ class _AccountListState extends State<AccountList> {
               heroTag: 'logout',
               onPressed: () async {
                 await Auth().logout();
-                Navigator.of(context).pushReplacementNamed('/login');
+                Navigator.of(context).pushReplacementNamed('/');
               },
               tooltip: 'Logout',
               child: Icon(Icons.exit_to_app),

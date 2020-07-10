@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:twch/account_list.dart';
-import 'login.dart';
+import 'package:twch/pages/home.dart';
+import 'package:twch/pages/account_list.dart';
 
 const String appTitle = 'twch';
 
@@ -15,9 +15,9 @@ class TwchApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: appTitle,
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: <String, WidgetBuilder>{
-        '/login': (BuildContext context) => Login(),
+        '/': (BuildContext context) => Home(),
         '/account-list': (BuildContext context) => AccountList(),
       },
     );

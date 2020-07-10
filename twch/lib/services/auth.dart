@@ -24,9 +24,8 @@ class Auth {
         return firebaseUser;
 
       case TwitterLoginStatus.cancelledByUser:
-        return null;
-
       case TwitterLoginStatus.error:
+      default:
         return null;
     }
   }

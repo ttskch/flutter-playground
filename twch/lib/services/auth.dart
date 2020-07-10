@@ -10,7 +10,7 @@ class Auth {
     consumerSecret: DotEnv().env['TWITTER_CONSUMER_SECRET'],
   );
 
-  void loginWithTwitter() async {
+  Future<FirebaseUser> loginWithTwitter() async {
     final TwitterLoginResult result = await _twitterLogin.authorize();
 
     switch (result.status) {
@@ -21,12 +21,21 @@ class Auth {
         );
         FirebaseUser firebaseUser =
             (await _firebaseAuth.signInWithCredential(credential)).user;
-        print(firebaseUser.uid);
-        break;
+        return firebaseUser;
+
       case TwitterLoginStatus.cancelledByUser:
-        break;
+        return null;
+
       case TwitterLoginStatus.error:
-        break;
+        return null;
     }
+  }
+
+  Future<FirebaseUser> getCurrentUser() {
+    return _firebaseAuth.currentUser();
+  }
+
+  Future<void> logout() {
+    return _firebaseAuth.signOut();
   }
 }

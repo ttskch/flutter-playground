@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'account_log_list.dart';
 import 'models/account.dart';
 import 'services/storage.dart';
+import 'services/auth.dart';
 
 class AccountList extends StatefulWidget {
   @override
@@ -66,10 +67,29 @@ class _AccountListState extends State<AccountList> {
     return Scaffold(
       appBar: AppBar(title: Text('Account list')),
       body: _buildList(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _pushAddScreen,
-        tooltip: 'Add account',
-        child: Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            margin: EdgeInsets.only(right: 12),
+            child: FloatingActionButton(
+              heroTag: 'logout',
+              onPressed: () async {
+                await Auth().logout();
+                Navigator.of(context).pushReplacementNamed('/login');
+              },
+              tooltip: 'Logout',
+              child: Icon(Icons.exit_to_app),
+              backgroundColor: Colors.grey,
+            ),
+          ),
+          FloatingActionButton(
+            heroTag: 'add',
+            onPressed: _pushAddScreen,
+            tooltip: 'Add account',
+            child: Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }

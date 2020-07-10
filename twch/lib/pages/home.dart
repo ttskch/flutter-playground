@@ -7,7 +7,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Auth().getCurrentUser(),
+      future: Auth.getCurrentUser(),
       builder: (BuildContext context, AsyncSnapshot ss) {
         if (ss.connectionState != ConnectionState.done) {
           return Center(child: CircularProgressIndicator());

@@ -75,7 +75,7 @@ class _AccountListState extends State<AccountList> {
             child: FloatingActionButton(
               heroTag: 'logout',
               onPressed: () async {
-                await Auth().logout();
+                await Auth.logout();
                 Navigator.of(context).pushReplacementNamed('/');
               },
               tooltip: 'Logout',

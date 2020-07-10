@@ -1,14 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:twch/models/account.dart';
 import 'package:twch/models/account_log.dart';
+import 'package:twch/services/auth.dart';
 
 typedef AccountsListenCallback = void Function(List<Account>);
 typedef AccountLogsListenCallback = void Function(List<AccountLog>);
 
 class Storage {
-  static void getAccounts(AccountsListenCallback callback) {
-    Firestore.instance
-        .collection('accounts')
+  static Firestore _firestore = Firestore.instance;
+
+  static Future<String> get _userId async {
+    return (await Auth.getCurrentUser()).uid;
+  }
+
+  static void getAccounts(AccountsListenCallback callback) async {
+    _firestore
+        .collection('users/${await _userId}/accounts')
         .orderBy('createdAt')
         .snapshots()
         .listen((QuerySnapshot ss) {
@@ -25,25 +32,29 @@ class Storage {
     });
   }
 
-  static void addAccount(String username) {
-    Firestore.instance.collection('accounts').add({
+  static void addAccount(String username) async {
+    _firestore.collection('/users/${await _userId}/accounts').add({
       'username': username,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
-  static void deleteAccount(Account account) {
-    Firestore.instance.collection('accounts').document(account.id).delete();
+  static void deleteAccount(Account account) async {
+    _firestore
+        .collection('/users/${await _userId}/accounts')
+        .document(account.id)
+        .delete();
     Storage.deleteAccountLogs(account);
   }
 
   static void getAccountLogs(
-      Account account, AccountLogsListenCallback callback) {
-    final DocumentReference accountRef =
-        Firestore.instance.collection('accounts').document(account.id);
+      Account account, AccountLogsListenCallback callback) async {
+    final DocumentReference accountRef = _firestore
+        .collection('/users/${await _userId}/accounts')
+        .document(account.id);
 
-    Firestore.instance
-        .collection('accountLogs')
+    _firestore
+        .collection('/users/${await _userId}/accountLogs')
         .where('account', isEqualTo: accountRef)
         .orderBy('createdAt')
         .snapshots()
@@ -64,30 +75,32 @@ class Storage {
   static void addAccountLog({
     Account account,
     int followerCount,
-  }) {
-    final DocumentReference accountRef =
-        Firestore.instance.collection('accounts').document(account.id);
+  }) async {
+    final DocumentReference accountRef = _firestore
+        .collection('/users/${await _userId}/accounts')
+        .document(account.id);
 
-    Firestore.instance.collection('accountLogs').add({
+    _firestore.collection('/users/${await _userId}/accountLogs').add({
       'account': accountRef,
       'followerCount': followerCount,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
-  static void deleteAccountLog(AccountLog accountLog) {
-    Firestore.instance
-        .collection('accountLogs')
+  static void deleteAccountLog(AccountLog accountLog) async {
+    _firestore
+        .collection('/users/${await _userId}/accountLogs')
         .document(accountLog.id)
         .delete();
   }
 
   static void deleteAccountLogs(Account account) async {
-    final DocumentReference accountRef =
-        Firestore.instance.collection('accounts').document(account.id);
+    final DocumentReference accountRef = _firestore
+        .collection('/users/${await _userId}/accounts')
+        .document(account.id);
 
-    QuerySnapshot ss = await Firestore.instance
-        .collection('accountLogs')
+    QuerySnapshot ss = await _firestore
+        .collection('/users/${await _userId}/accountLogs')
         .where('account', isEqualTo: accountRef)
         .getDocuments();
 

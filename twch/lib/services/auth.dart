@@ -3,14 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_twitter/flutter_twitter.dart';
 
 class Auth {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  final TwitterLogin _twitterLogin = TwitterLogin(
+  static final TwitterLogin _twitterLogin = TwitterLogin(
     consumerKey: DotEnv().env['TWITTER_CONSUMER_KEY'],
     consumerSecret: DotEnv().env['TWITTER_CONSUMER_SECRET'],
   );
 
-  Future<FirebaseUser> loginWithTwitter() async {
+  static Future<FirebaseUser> loginWithTwitter() async {
     final TwitterLoginResult result = await _twitterLogin.authorize();
 
     switch (result.status) {
@@ -30,11 +30,11 @@ class Auth {
     }
   }
 
-  Future<FirebaseUser> getCurrentUser() {
+  static Future<FirebaseUser> getCurrentUser() {
     return _firebaseAuth.currentUser();
   }
 
-  Future<void> logout() {
+  static Future<void> logout() {
     return _firebaseAuth.signOut();
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:twch/pages/account_log_list.dart';
 import 'package:twch/models/account.dart';
 import 'package:twch/services/storage.dart';
 import 'package:twch/services/auth.dart';
@@ -52,7 +51,8 @@ class _AccountListState extends State<AccountList> {
         color: Colors.red[500],
         onPressed: () => _promptRemove(account),
       ),
-      onTap: () => _pushAccountLogListScreen(account),
+      onTap: () => Navigator.of(context)
+          .pushNamed('/account-log-list', arguments: account),
     );
   }
 
@@ -136,12 +136,5 @@ class _AccountListState extends State<AccountList> {
             ],
           );
         });
-  }
-
-  void _pushAccountLogListScreen(Account account) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) {
-      return AccountLogList(account: account);
-    }));
   }
 }

@@ -22,8 +22,11 @@ class _LoginState extends State<Login> {
                 textColor: Colors.white,
                 onPressed: () async {
                   setState(() => _loading = true);
-                  await Auth.loginWithTwitter();
-                  Navigator.of(context).pushReplacementNamed('/account-list');
+                  if (await Auth.loginWithTwitter() != null) {
+                    Navigator.of(context).pushReplacementNamed('/account-list');
+                  } else {
+                    setState(() => _loading = false);
+                  }
                 },
               ),
       ),

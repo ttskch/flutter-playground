@@ -8,6 +8,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _loggingIn = false;
+  String _email;
+  String _password;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,7 @@ class _LoginState extends State<Login> {
       child: ListView(
         children: [
           Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -35,18 +40,39 @@ class _LoginState extends State<Login> {
                   decoration: InputDecoration(
                     labelText: 'メールアドレス',
                   ),
+                  validator: (value) =>
+                      value.isEmpty ? 'メールアドレスが入力されていません' : null,
+                  onSaved: (value) => _email = value,
                 ),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'パスワード',
                   ),
                   obscureText: true,
+                  validator: (value) =>
+                      value.isEmpty ? 'パスワードが入力されていません' : null,
+                  onSaved: (value) => _password = value,
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 10.0),
                   child: RaisedButton(
                     child: Text('ログイン'),
-                    onPressed: _loginWithEmailAndPassword,
+                    onPressed: () async {
+                      final form = _formKey.currentState;
+                      if (form.validate()) {
+                        form.save();
+                        setState(() => _loggingIn = true);
+                        if (await Auth.loginWithEmailAndPassword(
+                              email: _email,
+                              password: _password,
+                            ) !=
+                            null) {
+                          // Navigator.of(context).pushReplacementNamed('/home');
+                        } else {
+                          setState(() => _loggingIn = false);
+                        }
+                      }
+                    },
                   ),
                 ),
               ],
@@ -80,6 +106,4 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
-  void _loginWithEmailAndPassword() {}
 }

@@ -7,11 +7,17 @@ class Auth {
     String email,
     String password,
   }) async {
-    return (await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    ))
-        .user;
+    try {
+      return (await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      ))
+          .user;
+    } catch (e) {
+      print(e);
+      print(e.message);
+      return null;
+    }
   }
 
   static Future<FirebaseUser> loginWithTwitter() async {

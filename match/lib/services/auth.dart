@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_twitter/flutter_twitter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_twitter/flutter_twitter.dart';
 
 class Auth {
   static Future<FirebaseUser> loginWithEmailAndPassword({

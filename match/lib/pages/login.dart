@@ -10,6 +10,7 @@ class _LoginState extends State<Login> {
   bool _loggingIn = false;
   String _email;
   String _password;
+  String _error = '';
 
   final _formKey = GlobalKey<FormState>();
 
@@ -31,6 +32,16 @@ class _LoginState extends State<Login> {
       padding: EdgeInsets.only(left: 16.0, right: 16.0),
       child: ListView(
         children: [
+          Container(
+            child: _error.isNotEmpty
+                ? Container(
+                    margin: EdgeInsets.only(top: 28.0, bottom: 8.0),
+                    child: Center(
+                      child: Text(_error, style: TextStyle(color: Colors.red)),
+                    ),
+                  )
+                : null,
+          ),
           Form(
             key: _formKey,
             child: Column(
@@ -59,6 +70,7 @@ class _LoginState extends State<Login> {
                     child: Text('ログイン'),
                     onPressed: () async {
                       final form = _formKey.currentState;
+                      _error = '';
                       if (form.validate()) {
                         form.save();
                         setState(() => _loggingIn = true);
@@ -69,7 +81,10 @@ class _LoginState extends State<Login> {
                             null) {
                           // Navigator.of(context).pushReplacementNamed('/home');
                         } else {
-                          setState(() => _loggingIn = false);
+                          setState(() {
+                            _loggingIn = false;
+                            _error = 'メールアドレスかパスワードが間違っています';
+                          });
                         }
                       }
                     },

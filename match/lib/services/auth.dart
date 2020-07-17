@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_twitter/flutter_twitter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Auth {
   static Future<FirebaseUser> loginWithEmailAndPassword({
@@ -10,6 +12,30 @@ class Auth {
       password: password,
     ))
         .user;
+  }
+
+  static Future<FirebaseUser> loginWithTwitter() async {
+    final TwitterLogin twitter = TwitterLogin(
+      consumerKey: DotEnv().env['TWITTER_CONSUMER_KEY'],
+      consumerSecret: DotEnv().env['TWITTER_CONSUMER_SECRET'],
+    );
+
+    final TwitterLoginResult result = await twitter.authorize();
+
+    switch (result.status) {
+      case TwitterLoginStatus.loggedIn:
+        final AuthCredential credential = TwitterAuthProvider.getCredential(
+          authToken: result.session.token,
+          authTokenSecret: result.session.secret,
+        );
+        return (await FirebaseAuth.instance.signInWithCredential(credential))
+            .user;
+
+      case TwitterLoginStatus.cancelledByUser:
+      case TwitterLoginStatus.error:
+      default:
+        return null;
+    }
   }
 
   static Future<FirebaseUser> getCurrentUser() {

@@ -1,9 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:match/services/auth.dart';
 
-void main() {
+void main() async {
+  await DotEnv().load('.env');
   runApp(MyApp());
 }
 
@@ -22,13 +23,23 @@ class MyApp extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(right: 12),
               child: FloatingActionButton(
-                heroTag: 'login',
-                child: Icon(Icons.person),
+                heroTag: 'login_with_email',
+                child: Icon(Icons.email),
                 onPressed: () async => print(
                   await Auth.loginWithEmailAndPassword(
                     email: 'test@test.com',
                     password: 'testtest',
                   ),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(right: 12),
+              child: FloatingActionButton(
+                heroTag: 'login_with_twitter',
+                child: Text('Tw'),
+                onPressed: () async => print(
+                  await Auth.loginWithTwitter(),
                 ),
               ),
             ),

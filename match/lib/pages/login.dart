@@ -13,8 +13,11 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('ログイン')),
-      body: Center(
-        child: _loggingIn ? CircularProgressIndicator() : _buildLoginForm(),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Center(
+          child: _loggingIn ? CircularProgressIndicator() : _buildLoginForm(),
+        ),
       ),
     );
   }

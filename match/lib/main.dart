@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,8 +15,17 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('match'),
         ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Firestore.instance.collection('test').add({
+              'content': 'test',
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+          },
+        ),
         body: Center(
-          child: Text('hello'),
+          child: Text('match'),
         ),
       ),
     );

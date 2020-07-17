@@ -40,6 +40,7 @@ class _LoginState extends State<Login> {
                   decoration: InputDecoration(
                     labelText: 'パスワード',
                   ),
+                  obscureText: true,
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 10.0),

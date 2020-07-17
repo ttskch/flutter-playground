@@ -6,7 +6,7 @@ class Message {
   final User from;
   final User to;
   final Message replyTo;
-  String body;
+  final String body;
   bool isRead;
   final DateTime createdAt;
 

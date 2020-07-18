@@ -36,8 +36,18 @@ class _LoginState extends State<Login> {
             child: _error.isNotEmpty
                 ? Container(
                     margin: EdgeInsets.only(top: 28.0, bottom: 8.0),
-                    child: Center(
-                      child: Text(_error, style: TextStyle(color: Colors.red)),
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(right: 4.0),
+                          child: Icon(
+                            Icons.error,
+                            color: Colors.red,
+                            size: 16.0,
+                          ),
+                        ),
+                        Text(_error, style: TextStyle(color: Colors.red)),
+                      ],
                     ),
                   )
                 : null,

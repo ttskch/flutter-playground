@@ -54,6 +54,7 @@ class _SignupState extends State<Signup> {
                   validator: (value) =>
                       value.isEmpty ? 'メールアドレスが入力されていません' : null,
                   onSaved: (value) => _email = value,
+                  initialValue: _email ?? '',
                 ),
                 TextFormField(
                   decoration: InputDecoration(

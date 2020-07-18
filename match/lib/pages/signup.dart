@@ -8,9 +8,10 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   bool _waiting = false;
+  String _error = '';
+
   String _email;
   String _password;
-  String _error = '';
 
   final _formKey = GlobalKey<FormState>();
 
@@ -64,7 +65,7 @@ class _SignupState extends State<Signup> {
                   validator: (value) =>
                       value.isEmpty ? 'メールアドレスが入力されていません' : null,
                   onSaved: (value) => _email = value,
-                  initialValue: _email ?? '',
+                  initialValue: _email,
                 ),
                 TextFormField(
                   decoration: InputDecoration(

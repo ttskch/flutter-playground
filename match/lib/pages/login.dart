@@ -96,7 +96,16 @@ class _LoginState extends State<Login> {
           Center(
             child: Container(
               padding: EdgeInsets.only(top: 28.0, bottom: 28.0),
-              child: Text('または'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FlatButton(
+                    child: Text('新規ユーザー登録'),
+                    onPressed: () => Navigator.of(context).pushNamed('/signup'),
+                  ),
+                  Text('または'),
+                ],
+              ),
             ),
           ),
           Column(

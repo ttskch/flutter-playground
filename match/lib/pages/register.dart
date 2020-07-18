@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
+import 'package:match/repositories/user_repository.dart';
 import 'package:match/services/auth.dart';
 
 class Register extends StatefulWidget {
@@ -123,6 +124,13 @@ class _RegisterState extends State<Register> {
                         form.save();
                         setState(() => _waiting = true);
                         try {
+                          final User user = await UserRepository().create(
+                            fullName: _fullName,
+                            gender: _gender,
+                            age: _age,
+                            selfIntroduction: _selfIntroduction,
+                          );
+                          print(user);
                           // Navigator.of(context).pushReplacementNamed('/home');
                         } catch (e) {
                           setState(() {

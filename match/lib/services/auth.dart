@@ -3,6 +3,29 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_twitter/flutter_twitter.dart';
 
 class Auth {
+  static Future<FirebaseUser> signupWithEmailAndPassword({
+    String email,
+    String password,
+  }) async {
+    try {
+      return (await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      ))
+          .user;
+    } catch (e) {
+      switch (e.code) {
+        case 'ERROR_INVALID_EMAIL':
+          throw InvalidEmailException();
+        case 'ERROR_WEAK_PASSWORD':
+          throw WeakPasswordException();
+        default:
+          print(e);
+          rethrow;
+      }
+    }
+  }
+
   static Future<FirebaseUser> loginWithEmailAndPassword({
     String email,
     String password,
@@ -14,9 +37,17 @@ class Auth {
       ))
           .user;
     } catch (e) {
-      print(e);
-      print(e.message);
-      return null;
+      switch (e.code) {
+        case 'ERROR_INVALID_EMAIL':
+          throw InvalidEmailException();
+        case 'ERROR_USER_NOT_FOUND':
+          throw UserNotFoundExceptioin();
+        case 'ERROR_WRONG_PASSWORD':
+          throw WrongPasswordException();
+        default:
+          print(e);
+          rethrow;
+      }
     }
   }
 
@@ -52,3 +83,11 @@ class Auth {
     return FirebaseAuth.instance.signOut();
   }
 }
+
+class InvalidEmailException implements Exception {}
+
+class WeakPasswordException implements Exception {}
+
+class UserNotFoundExceptioin implements Exception {}
+
+class WrongPasswordException implements Exception {}

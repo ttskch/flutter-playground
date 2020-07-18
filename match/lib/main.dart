@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:match/pages/login.dart';
+import 'package:match/pages/signup.dart';
 import 'package:match/services/auth.dart';
 
 void main() async {
@@ -14,9 +15,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'match',
-      initialRoute: '/',
+      initialRoute: '/signup',
       routes: {
         '/': (BuildContext context) => Login(),
+        '/signup': (BuildContext context) => Signup(),
       },
       // home: Scaffold(
       //   appBar: AppBar(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:match/services/auth.dart';
 
-class Login extends StatefulWidget {
+class Signup extends StatefulWidget {
   @override
-  createState() => _LoginState();
+  createState() => _SignupState();
 }
 
-class _LoginState extends State<Login> {
+class _SignupState extends State<Signup> {
   bool _waiting = false;
   String _email;
   String _password;
@@ -17,17 +17,17 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('ログイン')),
+      appBar: AppBar(title: Text('新規ユーザー登録')),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Center(
-          child: _waiting ? CircularProgressIndicator() : _buildForm(),
+          child: _waiting ? CircularProgressIndicator() : _buildLoginForm(),
         ),
       ),
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildLoginForm() {
     return Container(
       padding: EdgeInsets.only(left: 16.0, right: 16.0),
       child: ListView(
@@ -67,7 +67,7 @@ class _LoginState extends State<Login> {
                 Container(
                   margin: EdgeInsets.only(top: 10.0),
                   child: RaisedButton(
-                    child: Text('ログイン'),
+                    child: Text('登録'),
                     onPressed: () async {
                       final form = _formKey.currentState;
                       _error = '';
@@ -75,16 +75,17 @@ class _LoginState extends State<Login> {
                         form.save();
                         setState(() => _waiting = true);
                         try {
-                          await Auth.loginWithEmailAndPassword(
+                          await Auth.signupWithEmailAndPassword(
                             email: _email,
                             password: _password,
                           );
-                          // Navigator.of(context).pushReplacementNamed('/home');
-                        } catch (e) {
-                          setState(() {
-                            _waiting = false;
-                            _error = 'メールアドレスかパスワードが間違っています';
-                          });
+                          Navigator.of(context).pushReplacementNamed('/home');
+                        } on InvalidEmailException {
+                          setState(() => _error = '有効なメールアドレスを入力してください');
+                        } on WeakPasswordException {
+                          setState(() => _error = 'パスワードは6文字以上にしてください');
+                        } finally {
+                          setState(() => _waiting = false);
                         }
                       }
                     },
@@ -92,30 +93,6 @@ class _LoginState extends State<Login> {
                 ),
               ],
             ),
-          ),
-          Center(
-            child: Container(
-              padding: EdgeInsets.only(top: 28.0, bottom: 28.0),
-              child: Text('または'),
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              RaisedButton(
-                child: Text('Twitterでログイン'),
-                color: Colors.blue,
-                textColor: Colors.white,
-                onPressed: () async {
-                  setState(() => _waiting = true);
-                  if (await Auth.loginWithTwitter() != null) {
-                    // Navigator.of(context).pushReplacementNamed('/home');
-                  } else {
-                    setState(() => _waiting = false);
-                  }
-                },
-              ),
-            ],
           ),
         ],
       ),

@@ -91,7 +91,8 @@ class _SignupState extends State<Signup> {
                             email: _email,
                             password: _password,
                           );
-                          Navigator.of(context).pushReplacementNamed('/home');
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/register', (route) => false);
                         } on InvalidEmailException {
                           setState(() => _error = '有効なメールアドレスを入力してください');
                         } on WeakPasswordException {

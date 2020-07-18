@@ -87,7 +87,7 @@ class _SignupState extends State<Signup> {
                         form.save();
                         setState(() => _waiting = true);
                         try {
-                          await Auth.signupWithEmailAndPassword(
+                          await Auth().signupWithEmailAndPassword(
                             email: _email,
                             password: _password,
                           );

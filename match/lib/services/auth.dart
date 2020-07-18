@@ -3,7 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_twitter/flutter_twitter.dart';
 
 class Auth {
-  static Future<FirebaseUser> signupWithEmailAndPassword({
+  Future<FirebaseUser> signupWithEmailAndPassword({
     String email,
     String password,
   }) async {
@@ -26,7 +26,7 @@ class Auth {
     }
   }
 
-  static Future<FirebaseUser> loginWithEmailAndPassword({
+  Future<FirebaseUser> loginWithEmailAndPassword({
     String email,
     String password,
   }) async {
@@ -51,7 +51,7 @@ class Auth {
     }
   }
 
-  static Future<FirebaseUser> loginWithTwitter() async {
+  Future<FirebaseUser> loginWithTwitter() async {
     final TwitterLogin twitter = TwitterLogin(
       consumerKey: DotEnv().env['TWITTER_CONSUMER_KEY'],
       consumerSecret: DotEnv().env['TWITTER_CONSUMER_SECRET'],
@@ -75,11 +75,11 @@ class Auth {
     }
   }
 
-  static Future<FirebaseUser> getCurrentUser() {
+  Future<FirebaseUser> getCurrentUser() {
     return FirebaseAuth.instance.currentUser();
   }
 
-  static Future<void> logout() {
+  Future<void> logout() {
     return FirebaseAuth.instance.signOut();
   }
 }

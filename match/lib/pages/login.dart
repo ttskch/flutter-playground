@@ -87,7 +87,7 @@ class _LoginState extends State<Login> {
                         form.save();
                         setState(() => _waiting = true);
                         try {
-                          await Auth.loginWithEmailAndPassword(
+                          await Auth().loginWithEmailAndPassword(
                             email: _email,
                             password: _password,
                           );
@@ -129,7 +129,7 @@ class _LoginState extends State<Login> {
                 textColor: Colors.white,
                 onPressed: () async {
                   setState(() => _waiting = true);
-                  if (await Auth.loginWithTwitter() != null) {
+                  if (await Auth().loginWithTwitter() != null) {
                     // Navigator.of(context).pushReplacementNamed('/home');
                   } else {
                     setState(() => _waiting = false);

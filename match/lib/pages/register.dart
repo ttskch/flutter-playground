@@ -10,7 +10,6 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   bool _waiting = false;
-  String _error = '';
 
   String _fullName;
   Gender _gender;
@@ -37,26 +36,6 @@ class _RegisterState extends State<Register> {
       padding: EdgeInsets.only(left: 16.0, right: 16.0),
       child: ListView(
         children: [
-          Container(
-            child: _error.isNotEmpty
-                ? Container(
-                    margin: EdgeInsets.only(top: 28.0, bottom: 8.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 4.0),
-                          child: Icon(
-                            Icons.error,
-                            color: Colors.red,
-                            size: 16.0,
-                          ),
-                        ),
-                        Text(_error, style: TextStyle(color: Colors.red)),
-                      ],
-                    ),
-                  )
-                : null,
-          ),
           Form(
             key: _formKey,
             child: Column(
@@ -89,6 +68,7 @@ class _RegisterState extends State<Register> {
                   onSaved: (value) => _gender = value,
                 ),
                 TextFormField(
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: '年齢',
                   ),
@@ -119,25 +99,17 @@ class _RegisterState extends State<Register> {
                     child: Text('利用を開始する'),
                     onPressed: () async {
                       final form = _formKey.currentState;
-                      _error = '';
                       if (form.validate()) {
                         form.save();
                         setState(() => _waiting = true);
-                        try {
-                          final User user = await UserRepository().create(
-                            fullName: _fullName,
-                            gender: _gender,
-                            age: _age,
-                            selfIntroduction: _selfIntroduction,
-                          );
-                          print(user);
-                          // Navigator.of(context).pushReplacementNamed('/home');
-                        } catch (e) {
-                          setState(() {
-                            _waiting = false;
-                            _error = 'メールアドレスかパスワードが間違っています';
-                          });
-                        }
+                        final User user = await UserRepository().create(
+                          fullName: _fullName,
+                          gender: _gender,
+                          age: _age,
+                          selfIntroduction: _selfIntroduction,
+                        );
+                        print(user);
+                        // Navigator.of(context).pushReplacementNamed('/home');
                       }
                     },
                   ),

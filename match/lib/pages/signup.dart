@@ -97,6 +97,8 @@ class _SignupState extends State<Signup> {
                           setState(() => _error = '有効なメールアドレスを入力してください');
                         } on WeakPasswordException {
                           setState(() => _error = 'パスワードは6文字以上にしてください');
+                        } on EmailAlreadyInUseException {
+                          setState(() => _error = 'そのメールアドレスはすでに登録されています');
                         } finally {
                           setState(() => _waiting = false);
                         }

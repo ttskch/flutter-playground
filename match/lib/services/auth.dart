@@ -19,6 +19,8 @@ class Auth {
           throw InvalidEmailException();
         case 'ERROR_WEAK_PASSWORD':
           throw WeakPasswordException();
+        case 'ERROR_EMAIL_ALREADY_IN_USE':
+          throw EmailAlreadyInUseException();
         default:
           print(e);
           rethrow;
@@ -91,3 +93,5 @@ class WeakPasswordException implements Exception {}
 class UserNotFoundExceptioin implements Exception {}
 
 class WrongPasswordException implements Exception {}
+
+class EmailAlreadyInUseException implements Exception {}

@@ -77,8 +77,8 @@ class Auth {
     }
   }
 
-  Future<FirebaseUser> getCurrentUser() {
-    return FirebaseAuth.instance.currentUser();
+  Future<String> getCurrentUserId() async {
+    return (await FirebaseAuth.instance.currentUser()).uid;
   }
 
   Future<void> logout() {

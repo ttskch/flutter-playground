@@ -38,7 +38,7 @@ class UserRepository {
     int age,
     String selfIntroduction,
   }) async {
-    final uid = (await Auth().getCurrentUser()).uid;
+    final uid = await Auth().getCurrentUserId();
 
     await _collection.document(uid).setData({
       'fullName': fullName,
@@ -51,7 +51,11 @@ class UserRepository {
     return get(uid);
   }
 
-  Future<void> update(User user) {
+  Future<void> update(User user) async {
+    if (user.id == await Auth().getCurrentUserId()) {
+      throw ArgumentError('他人のユーザー情報は変更できません');
+    }
+
     return _collection.document(user.id).updateData(_toObject(user));
   }
 

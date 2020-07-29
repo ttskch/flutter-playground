@@ -86,17 +86,23 @@ class _LoginState extends State<Login> {
                       if (form.validate()) {
                         form.save();
                         setState(() => _waiting = true);
-                        try {
-                          await Auth().loginWithEmailAndPassword(
-                            email: _email,
-                            password: _password,
-                          );
-                          // Navigator.of(context).pushReplacementNamed('/home');
-                        } catch (e) {
-                          setState(() {
-                            _waiting = false;
-                            _error = 'メールアドレスかパスワードが間違っています';
-                          });
+                        switch (await Auth().loginWithEmailAndPassword(
+                          email: _email,
+                          password: _password,
+                        )) {
+                          case LoginResult.LoggedIn:
+                            // Navigator.of(context).pushReplacementNamed('/home');
+                            break;
+                          case LoginResult.SignedUp:
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                '/register', (route) => false);
+                            break;
+                          default:
+                            setState(() {
+                              _waiting = false;
+                              _error = 'メールアドレスかパスワードが間違っています';
+                            });
+                            break;
                         }
                       }
                     },
@@ -129,10 +135,17 @@ class _LoginState extends State<Login> {
                 textColor: Colors.white,
                 onPressed: () async {
                   setState(() => _waiting = true);
-                  if (await Auth().loginWithTwitter() != null) {
-                    // Navigator.of(context).pushReplacementNamed('/home');
-                  } else {
-                    setState(() => _waiting = false);
+                  switch (await Auth().loginWithTwitter()) {
+                    case LoginResult.LoggedIn:
+                      // Navigator.of(context).pushReplacementNamed('/home');
+                      break;
+                    case LoginResult.SignedUp:
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/register', (route) => false);
+                      break;
+                    default:
+                      setState(() => _waiting = false);
+                      break;
                   }
                 },
               ),

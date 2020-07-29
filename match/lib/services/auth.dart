@@ -1,18 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_twitter/flutter_twitter.dart';
+import 'package:match/models/user.dart';
+import 'package:match/repositories/user_repository.dart';
 
 class Auth {
-  Future<FirebaseUser> signupWithEmailAndPassword({
+  Future<void> signupWithEmailAndPassword({
     String email,
     String password,
   }) async {
     try {
-      return (await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
-      ))
-          .user;
+      );
     } catch (e) {
       switch (e.code) {
         case 'ERROR_INVALID_EMAIL':
@@ -28,24 +29,28 @@ class Auth {
     }
   }
 
-  Future<FirebaseUser> loginWithEmailAndPassword({
+  Future<LoginResult> loginWithEmailAndPassword({
     String email,
     String password,
   }) async {
     try {
-      return (await FirebaseAuth.instance.signInWithEmailAndPassword(
+      FirebaseUser user =
+          (await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       ))
-          .user;
+              .user;
+
+      return await UserRepository().get(user.uid) == null
+          ? LoginResult.SignedUp
+          : LoginResult.LoggedIn;
     } catch (e) {
       switch (e.code) {
         case 'ERROR_INVALID_EMAIL':
-          throw InvalidEmailException();
         case 'ERROR_USER_NOT_FOUND':
-          throw UserNotFoundExceptioin();
         case 'ERROR_WRONG_PASSWORD':
-          throw WrongPasswordException();
+          return LoginResult.Error;
+
         default:
           print(e);
           rethrow;
@@ -53,7 +58,7 @@ class Auth {
     }
   }
 
-  Future<FirebaseUser> loginWithTwitter() async {
+  Future<LoginResult> loginWithTwitter() async {
     final TwitterLogin twitter = TwitterLogin(
       consumerKey: DotEnv().env['TWITTER_CONSUMER_KEY'],
       consumerSecret: DotEnv().env['TWITTER_CONSUMER_SECRET'],
@@ -67,13 +72,19 @@ class Auth {
           authToken: result.session.token,
           authTokenSecret: result.session.secret,
         );
-        return (await FirebaseAuth.instance.signInWithCredential(credential))
-            .user;
+        FirebaseUser user =
+            (await FirebaseAuth.instance.signInWithCredential(credential)).user;
+
+        return await UserRepository().get(user.uid) == null
+            ? LoginResult.SignedUp
+            : LoginResult.LoggedIn;
 
       case TwitterLoginStatus.cancelledByUser:
+        return LoginResult.Canceled;
+
       case TwitterLoginStatus.error:
       default:
-        return null;
+        return LoginResult.Error;
     }
   }
 
@@ -86,12 +97,15 @@ class Auth {
   }
 }
 
+enum LoginResult {
+  SignedUp,
+  LoggedIn,
+  Canceled,
+  Error,
+}
+
 class InvalidEmailException implements Exception {}
 
 class WeakPasswordException implements Exception {}
-
-class UserNotFoundExceptioin implements Exception {}
-
-class WrongPasswordException implements Exception {}
 
 class EmailAlreadyInUseException implements Exception {}

@@ -29,7 +29,7 @@ class UserRepository {
   }
 
   Future<User> get(String id) async {
-    return _fromDocument((await _collection.document(id).get()));
+    return _fromDocument(await _collection.document(id).get());
   }
 
   Future<User> create({
@@ -60,6 +60,10 @@ class UserRepository {
   }
 
   User _fromDocument(DocumentSnapshot doc) {
+    if (doc.data == null) {
+      return null;
+    }
+
     return User(
       id: doc.documentID,
       fullName: doc.data['fullName'],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:match/services/auth.dart';
+import 'package:match/widgets/spinner.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -21,9 +22,7 @@ class _LoginState extends State<Login> {
       appBar: AppBar(title: Text('ログイン')),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: Center(
-          child: _waiting ? CircularProgressIndicator() : _buildForm(),
-        ),
+        child: _waiting ? Spinner() : _buildForm(),
       ),
     );
   }

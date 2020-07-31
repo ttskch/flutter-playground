@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
+import 'package:match/widgets/spinner.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -23,9 +24,7 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(title: Text('ユーザー情報入力')),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: Center(
-          child: _waiting ? CircularProgressIndicator() : _buildForm(),
-        ),
+        child: _waiting ? Spinner() : _buildForm(),
       ),
     );
   }

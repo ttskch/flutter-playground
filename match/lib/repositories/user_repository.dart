@@ -32,6 +32,10 @@ class UserRepository {
     return _fromDocument(await _collection.document(id).get());
   }
 
+  Future<User> getMe() async {
+    return get(await Auth().getCurrentUserId());
+  }
+
   Future<User> create({
     String fullName,
     Gender gender,

@@ -40,7 +40,9 @@ class UserRepository {
   }) async {
     final uid = await Auth().getCurrentUserId();
 
-    await _collection.document(uid).setData({
+    DocumentReference docRef = _collection.document(uid);
+
+    await docRef.setData({
       'fullName': fullName,
       'gender': gender.toString(),
       'age': age,
@@ -48,7 +50,7 @@ class UserRepository {
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    return get(uid);
+    return _fromDocument(await docRef.get());
   }
 
   Future<void> update(User user) async {

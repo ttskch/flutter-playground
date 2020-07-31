@@ -89,7 +89,9 @@ class Auth {
   }
 
   Future<String> getCurrentUserId() async {
-    return (await FirebaseAuth.instance.currentUser()).uid;
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+
+    return user != null ? user.uid : null;
   }
 
   Future<void> logout() {

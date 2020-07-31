@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_twitter/flutter_twitter.dart';
-import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 
 class Auth {
@@ -88,14 +87,28 @@ class Auth {
     }
   }
 
+  Future<void> logout() {
+    return FirebaseAuth.instance.signOut();
+  }
+
   Future<String> getCurrentUserId() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
 
     return user != null ? user.uid : null;
   }
 
-  Future<void> logout() {
-    return FirebaseAuth.instance.signOut();
+  Future<LoginStatus> getLoginStatus() async {
+    String userId = await getCurrentUserId();
+
+    if (userId == null) {
+      return LoginStatus.Anonymous;
+    }
+
+    if (await UserRepository().get(userId) == null) {
+      return LoginStatus.SignedUp;
+    }
+
+    return LoginStatus.LoggedIn;
   }
 }
 
@@ -104,6 +117,12 @@ enum LoginResult {
   LoggedIn,
   Canceled,
   Error,
+}
+
+enum LoginStatus {
+  Anonymous,
+  SignedUp,
+  LoggedIn,
 }
 
 class InvalidEmailException implements Exception {}

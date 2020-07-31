@@ -5,6 +5,7 @@ import 'package:match/pages/login.dart';
 import 'package:match/pages/register.dart';
 import 'package:match/pages/signup.dart';
 import 'package:match/services/auth.dart';
+import 'package:match/widgets/spinner.dart';
 
 void main() async {
   await DotEnv().load('.env');
@@ -19,9 +20,20 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (BuildContext context) => FutureBuilder(
-              future: Auth().getCurrentUserId(),
-              builder: (BuildContext context, AsyncSnapshot<String> ss) {
-                return ss.data == null ? Login() : Home();
+              future: Auth().getLoginStatus(),
+              builder: (BuildContext context, AsyncSnapshot<LoginStatus> ss) {
+                if (ss.connectionState != ConnectionState.done) {
+                  return Spinner();
+                }
+                switch (ss.data) {
+                  case LoginStatus.LoggedIn:
+                    return Home();
+                  case LoginStatus.SignedUp:
+                    return Register();
+                  case LoginStatus.Anonymous:
+                  default:
+                    return Login();
+                }
               },
             ),
         '/login': (BuildContext context) => Login(),

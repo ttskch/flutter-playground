@@ -91,11 +91,11 @@ class _LoginState extends State<Login> {
                           password: _password,
                         )) {
                           case LoginResult.LoggedIn:
-                            // Navigator.of(context).pushReplacementNamed('/home');
+                            Navigator.of(context).pushReplacementNamed('/home');
                             break;
                           case LoginResult.SignedUp:
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                '/register', (route) => false);
+                            Navigator.of(context)
+                                .pushReplacementNamed('/register');
                             break;
                           default:
                             setState(() {
@@ -137,7 +137,7 @@ class _LoginState extends State<Login> {
                   setState(() => _waiting = true);
                   switch (await Auth().loginWithTwitter()) {
                     case LoginResult.LoggedIn:
-                      // Navigator.of(context).pushReplacementNamed('/home');
+                      Navigator.of(context).pushReplacementNamed('/home');
                       break;
                     case LoginResult.SignedUp:
                       Navigator.of(context).pushNamedAndRemoveUntil(

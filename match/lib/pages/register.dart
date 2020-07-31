@@ -101,14 +101,13 @@ class _RegisterState extends State<Register> {
                       if (form.validate()) {
                         form.save();
                         setState(() => _waiting = true);
-                        final User user = await UserRepository().create(
+                        await UserRepository().create(
                           fullName: _fullName,
                           gender: _gender,
                           age: _age,
                           selfIntroduction: _selfIntroduction,
                         );
-                        print(user);
-                        // Navigator.of(context).pushReplacementNamed('/home');
+                        Navigator.of(context).pushReplacementNamed('/home');
                       }
                     },
                   ),

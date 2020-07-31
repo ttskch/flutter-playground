@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
-import 'package:match/services/auth.dart';
+import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/spinner.dart';
 
 class Register extends StatefulWidget {
@@ -25,13 +25,7 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(
         title: Text('ユーザー情報入力'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              Auth().logout();
-              Navigator.of(context).pushReplacementNamed('/login');
-            },
-          ),
+          LogoutButton(),
         ],
       ),
       body: GestureDetector(

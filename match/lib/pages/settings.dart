@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/widgets/logout_button.dart';
@@ -29,7 +30,7 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ユーザー設定'),
+        title: Text('ユーザー情報'),
         actions: <Widget>[
           LogoutButton(),
         ],
@@ -113,7 +114,15 @@ class _SettingsState extends State<Settings> {
                         form.save();
                         setState(() => _waiting = true);
                         await UserRepository().update(_me);
-                        setState(() => _waiting = false);
+                        setState(() {
+                          _waiting = false;
+                          Fluttertoast.showToast(
+                            msg: 'ユーザー情報を更新しました',
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.green,
+                          );
+                        });
                       }
                     },
                   ),

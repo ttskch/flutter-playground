@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
+import 'package:match/services/auth.dart';
 import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/waitable_button.dart';
 import 'package:match/widgets/spinner.dart';
@@ -12,6 +13,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  bool _newbie;
   User _me;
   bool _waiting = true;
   final _formKey = GlobalKey<FormState>();
@@ -19,12 +21,26 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    UserRepository().getMe().then((User me) {
-      setState(() {
-        _me = me;
-        _waiting = false;
-      });
-    });
+
+    () async {
+      _me = await UserRepository().getMe();
+
+      if (_me == null) {
+        _newbie = true;
+        _me = User(
+          id: await Auth().getCurrentUserId(),
+          fullName: null,
+          gender: null,
+          age: null,
+          createdAt: null,
+        );
+      } else {
+        _newbie = false;
+      }
+
+      _waiting = false;
+      setState(() => null);
+    }();
   }
 
   @override
@@ -113,15 +129,23 @@ class _SettingsState extends State<Settings> {
                       final form = _formKey.currentState;
                       if (form.validate()) {
                         form.save();
-                        await UserRepository().update(_me);
-                        setState(() {
+                        if (_newbie) {
+                          await UserRepository().create(
+                            fullName: _me.fullName,
+                            gender: _me.gender,
+                            age: _me.age,
+                            selfIntroduction: _me.selfIntroduction,
+                          );
+                          Navigator.of(context).pushReplacementNamed('/home');
+                        } else {
+                          await UserRepository().update(_me);
                           Fluttertoast.showToast(
                             msg: 'ユーザー情報を更新しました',
                             toastLength: Toast.LENGTH_LONG,
                             gravity: ToastGravity.BOTTOM,
                             backgroundColor: Colors.green,
                           );
-                        });
+                        }
                       }
                     },
                   ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:match/pages/home.dart';
 import 'package:match/pages/login.dart';
-import 'package:match/pages/register.dart';
 import 'package:match/pages/settings.dart';
 import 'package:match/pages/signup.dart';
 import 'package:match/services/auth.dart';
@@ -30,7 +29,7 @@ class MyApp extends StatelessWidget {
                   case LoginStatus.LoggedIn:
                     return Home();
                   case LoginStatus.SignedUp:
-                    return Register();
+                    return Settings();
                   case LoginStatus.Anonymous:
                   default:
                     return Login();
@@ -39,9 +38,8 @@ class MyApp extends StatelessWidget {
             ),
         '/login': (BuildContext context) => Login(),
         '/signup': (BuildContext context) => Signup(),
-        '/register': (BuildContext context) => Register(),
-        '/home': (BuildContext context) => Home(),
         '/settings': (BuildContext context) => Settings(),
+        '/home': (BuildContext context) => Home(),
       },
     );
   }

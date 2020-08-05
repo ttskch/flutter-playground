@@ -94,7 +94,7 @@ class _LoginState extends State<Login> {
                             break;
                           case LoginResult.SignedUp:
                             Navigator.of(context)
-                                .pushReplacementNamed('/register');
+                                .pushReplacementNamed('/settings');
                             break;
                           default:
                             setState(() {
@@ -140,7 +140,7 @@ class _LoginState extends State<Login> {
                       break;
                     case LoginResult.SignedUp:
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/register', (route) => false);
+                          '/settings', (route) => false);
                       break;
                     default:
                       setState(() => _waiting = false);

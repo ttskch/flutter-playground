@@ -1,6 +1,8 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
+import 'package:match/services/storage.dart';
 import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/spinner.dart';
 
@@ -16,6 +18,11 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text('HOME'),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.file_upload),
+            onPressed: () async => Storage()
+                .upload(await FilePicker.getFile(type: FileType.image)),
+          ),
           LogoutButton(),
         ],
       ),

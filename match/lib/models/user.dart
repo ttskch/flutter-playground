@@ -6,6 +6,7 @@ class User {
   Gender gender;
   int age;
   String selfIntroduction;
+  String imageUrl;
   final DateTime createdAt;
 
   User({
@@ -14,6 +15,7 @@ class User {
     @required this.gender,
     @required this.age,
     this.selfIntroduction,
+    this.imageUrl,
     @required this.createdAt,
   });
 }

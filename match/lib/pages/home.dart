@@ -4,6 +4,7 @@ import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/services/storage.dart';
 import 'package:match/widgets/logout_button.dart';
+import 'package:match/widgets/settings_button.dart';
 import 'package:match/widgets/spinner.dart';
 
 class Home extends StatefulWidget {
@@ -24,6 +25,7 @@ class _HomeState extends State<Home> {
                 .upload(await FilePicker.getFile(type: FileType.image)),
           ),
           LogoutButton(),
+          SettingsButton(),
         ],
       ),
       body: _buildGrid(),

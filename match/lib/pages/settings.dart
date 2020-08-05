@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/widgets/logout_button.dart';
+import 'package:match/widgets/waitable_button.dart';
 import 'package:match/widgets/spinner.dart';
 
 class Settings extends StatefulWidget {
@@ -106,16 +107,14 @@ class _SettingsState extends State<Settings> {
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 10.0),
-                  child: RaisedButton(
-                    child: Text('保存'),
+                  child: WaitableButton(
+                    label: '保存',
                     onPressed: () async {
                       final form = _formKey.currentState;
                       if (form.validate()) {
                         form.save();
-                        setState(() => _waiting = true);
                         await UserRepository().update(_me);
                         setState(() {
-                          _waiting = false;
                           Fluttertoast.showToast(
                             msg: 'ユーザー情報を更新しました',
                             toastLength: Toast.LENGTH_LONG,

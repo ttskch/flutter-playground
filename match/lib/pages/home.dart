@@ -37,6 +37,7 @@ class _HomeState extends State<Home> {
             crossAxisSpacing: 5.0,
             scrollDirection: Axis.vertical,
             crossAxisCount: 2,
+            childAspectRatio: 0.65,
             children: ss.data.map(_buildTile).toList(),
           ),
         );
@@ -45,11 +46,12 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildTile(User user) {
-    return Container(
-      child: Center(
-        child: Text(user.fullName),
-      ),
-      color: Colors.red,
+    return Column(
+      children: <Widget>[
+        Image.network('https://via.placeholder.com/500'),
+        Text('${user.fullName} (${user.age})'),
+        Text(user.selfIntroduction, overflow: TextOverflow.ellipsis),
+      ],
     );
   }
 

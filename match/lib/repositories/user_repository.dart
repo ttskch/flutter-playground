@@ -58,7 +58,7 @@ class UserRepository {
   }
 
   Future<void> update(User user) async {
-    if (user.id == await Auth().getCurrentUserId()) {
+    if (user.id != await Auth().getCurrentUserId()) {
       throw ArgumentError('他人のユーザー情報は変更できません');
     }
 

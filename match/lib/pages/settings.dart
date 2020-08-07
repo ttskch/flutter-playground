@@ -156,37 +156,36 @@ class _SettingsState extends State<Settings> {
                   onSaved: (value) => _me.selfIntroduction = value,
                   initialValue: _me.selfIntroduction,
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 10.0),
-                  child: WaitableButton(
-                    label: '保存',
-                    onPressed: () async {
-                      final form = _formKey.currentState;
-                      if (form.validate()) {
-                        form.save();
-                        if (_newbie) {
-                          await UserRepository().create(
-                            fullName: _me.fullName,
-                            gender: _me.gender,
-                            age: _me.age,
-                            selfIntroduction: _me.selfIntroduction,
-                            imageUrl:
-                                await Storage().upload(_previewingImageFile),
-                          );
-                          Navigator.of(context).pushReplacementNamed('/home');
-                        } else {
-                          _me.imageUrl =
-                              await Storage().upload(_previewingImageFile);
-                          await UserRepository().update(_me);
-                          Fluttertoast.showToast(
-                            msg: 'ユーザー情報を更新しました',
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.BOTTOM,
-                            backgroundColor: Colors.green,
-                          );
+                Builder(
+                  builder: (BuildContext context) => Container(
+                    margin: EdgeInsets.only(top: 10.0),
+                    child: WaitableButton(
+                      label: '保存',
+                      onPressed: () async {
+                        final form = _formKey.currentState;
+                        if (form.validate()) {
+                          form.save();
+                          if (_newbie) {
+                            await UserRepository().create(
+                              fullName: _me.fullName,
+                              gender: _me.gender,
+                              age: _me.age,
+                              selfIntroduction: _me.selfIntroduction,
+                              imageUrl:
+                                  await Storage().upload(_previewingImageFile),
+                            );
+                            Navigator.of(context).pushReplacementNamed('/home');
+                          } else {
+                            _me.imageUrl =
+                                await Storage().upload(_previewingImageFile);
+                            await UserRepository().update(_me);
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text('ユーザー情報を変更しました'),
+                            ));
+                          }
                         }
-                      }
-                    },
+                      },
+                    ),
                   ),
                 ),
               ],

@@ -44,7 +44,10 @@ class _SettingsState extends State<Settings> {
       }
 
       _waiting = false;
-      setState(() => null);
+
+      if (mounted) {
+        setState(() => null);
+      }
     }();
   }
 

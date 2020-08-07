@@ -19,11 +19,6 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text('HOME'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.file_upload),
-            onPressed: () async => Storage()
-                .upload(await FilePicker.getFile(type: FileType.image)),
-          ),
           LogoutButton(),
           SettingsButton(),
         ],
@@ -57,7 +52,15 @@ class _HomeState extends State<Home> {
   Widget _buildTile(User user) {
     return Column(
       children: <Widget>[
-        Image.network('https://via.placeholder.com/500'),
+        Container(
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Image.network(
+              user.imageUrl ?? 'https://via.placeholder.com/500',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
         Text('${user.fullName} (${user.age})'),
         Text(user.selfIntroduction, overflow: TextOverflow.ellipsis),
       ],

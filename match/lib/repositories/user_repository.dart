@@ -41,6 +41,7 @@ class UserRepository {
     Gender gender,
     int age,
     String selfIntroduction,
+    String imageUrl,
   }) async {
     final uid = await Auth().getCurrentUserId();
 
@@ -51,6 +52,7 @@ class UserRepository {
       'gender': gender.toString(),
       'age': age,
       'selfIntroduction': selfIntroduction,
+      'imageUrl': imageUrl,
       'createdAt': FieldValue.serverTimestamp(),
     });
 
@@ -78,6 +80,7 @@ class UserRepository {
           : Gender.Woman,
       age: doc.data['age'],
       selfIntroduction: doc.data['selfIntroduction'],
+      imageUrl: doc.data['imageUrl'],
       createdAt: (doc.data['createdAt'] ?? Timestamp.now()).toDate(),
     );
   }
@@ -88,6 +91,7 @@ class UserRepository {
       'gender': user.gender.toString(),
       'age': user.age,
       'selfIntroduction': user.selfIntroduction,
+      'imageUrl': user.imageUrl,
     };
   }
 }

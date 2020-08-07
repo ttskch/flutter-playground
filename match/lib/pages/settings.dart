@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/services/auth.dart';
-import 'package:match/widgets/logout_button.dart';
+import 'package:match/services/storage.dart';
 import 'package:match/widgets/waitable_button.dart';
 import 'package:match/widgets/spinner.dart';
 
@@ -15,6 +19,7 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   bool _newbie;
   User _me;
+  File _previewingImageFile;
   bool _waiting = true;
   final _formKey = GlobalKey<FormState>();
 
@@ -48,9 +53,6 @@ class _SettingsState extends State<Settings> {
     return Scaffold(
       appBar: AppBar(
         title: Text('ユーザー情報'),
-        actions: <Widget>[
-          LogoutButton(),
-        ],
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -64,6 +66,36 @@ class _SettingsState extends State<Settings> {
       padding: EdgeInsets.only(left: 16.0, right: 16.0),
       child: ListView(
         children: [
+          Container(
+            margin: EdgeInsets.only(top: 16.0),
+            child: GestureDetector(
+              child: Center(
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  child: _previewingImageFile != null
+                      ? Image.file(
+                          _previewingImageFile,
+                          fit: BoxFit.cover,
+                        )
+                      : _me.imageUrl != null
+                          ? Image.network(
+                              _me.imageUrl,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              'https://via.placeholder.com/150',
+                              fit: BoxFit.cover,
+                            ),
+                ),
+              ),
+              onTap: () async {
+                _previewingImageFile =
+                    await FilePicker.getFile(type: FileType.image);
+                setState(() => null);
+              },
+            ),
+          ),
           Form(
             key: _formKey,
             child: Column(
@@ -135,9 +167,13 @@ class _SettingsState extends State<Settings> {
                             gender: _me.gender,
                             age: _me.age,
                             selfIntroduction: _me.selfIntroduction,
+                            imageUrl:
+                                await Storage().upload(_previewingImageFile),
                           );
                           Navigator.of(context).pushReplacementNamed('/home');
                         } else {
+                          _me.imageUrl =
+                              await Storage().upload(_previewingImageFile);
                           await UserRepository().update(_me);
                           Fluttertoast.showToast(
                             msg: 'ユーザー情報を更新しました',

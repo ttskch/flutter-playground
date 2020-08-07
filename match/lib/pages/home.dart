@@ -68,7 +68,9 @@ class _HomeState extends State<Home> {
   }
 
   Future<List<User>> _getSearchedUsers() async {
-    Gender targetGender = (await UserRepository().getMe()).gender;
+    Gender targetGender = (await UserRepository().getMe()).gender == Gender.Man
+        ? Gender.Woman
+        : Gender.Man;
     return UserRepository().list(targetGender, (users) => null);
   }
 }

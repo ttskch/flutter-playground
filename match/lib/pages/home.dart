@@ -48,20 +48,24 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildTile(User user) {
-    return Column(
-      children: <Widget>[
-        Container(
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Image.network(
-              user.imageUrl ?? 'https://via.placeholder.com/500',
-              fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () =>
+          Navigator.of(context).pushNamed('/user/show', arguments: user),
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Image.network(
+                user.imageUrl ?? 'https://via.placeholder.com/500',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        Text('${user.fullName} (${user.age})'),
-        Text(user.selfIntroduction, overflow: TextOverflow.ellipsis),
-      ],
+          Text('${user.fullName} (${user.age})'),
+          Text(user.selfIntroduction, overflow: TextOverflow.ellipsis),
+        ],
+      ),
     );
   }
 

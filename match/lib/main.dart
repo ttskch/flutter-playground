@@ -4,8 +4,11 @@ import 'package:match/pages/home.dart';
 import 'package:match/pages/login.dart';
 import 'package:match/pages/settings.dart';
 import 'package:match/pages/signup.dart';
+import 'package:match/pages/user_show.dart';
 import 'package:match/services/auth.dart';
 import 'package:match/widgets/spinner.dart';
+
+import 'models/user.dart';
 
 void main() async {
   await DotEnv().load('.env');
@@ -40,6 +43,16 @@ class MyApp extends StatelessWidget {
         '/signup': (BuildContext context) => Signup(),
         '/settings': (BuildContext context) => Settings(),
         '/home': (BuildContext context) => Home(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/user/show') {
+          return MaterialPageRoute(
+            builder: (BuildContext context) =>
+                UserShow(user: settings.arguments as User),
+          );
+        }
+
+        return null;
       },
     );
   }

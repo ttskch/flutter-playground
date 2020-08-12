@@ -7,7 +7,6 @@ import 'package:match/repositories/user_repository.dart';
 import 'package:match/services/auth.dart';
 import 'package:match/services/storage.dart';
 import 'package:match/widgets/profile_image.dart';
-import 'package:match/widgets/waitable_button.dart';
 import 'package:match/widgets/spinner.dart';
 
 class Settings extends StatefulWidget {
@@ -20,6 +19,7 @@ class _SettingsState extends State<Settings> {
   User _me;
   File _previewingImageFile;
   bool _waiting = true;
+  bool _saving = false;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -150,32 +150,39 @@ class _SettingsState extends State<Settings> {
                 Builder(
                   builder: (BuildContext context) => Container(
                     margin: EdgeInsets.only(top: 10.0),
-                    child: WaitableButton(
-                      label: '保存',
-                      onPressed: () async {
-                        final form = _formKey.currentState;
-                        if (form.validate()) {
-                          form.save();
-                          if (_newbie) {
-                            await UserRepository().create(
-                              fullName: _me.fullName,
-                              gender: _me.gender,
-                              age: _me.age,
-                              selfIntroduction: _me.selfIntroduction,
-                              imageUrl:
-                                  await Storage().upload(_previewingImageFile),
-                            );
-                            Navigator.of(context).pushReplacementNamed('/home');
-                          } else {
-                            _me.imageUrl =
-                                await Storage().upload(_previewingImageFile);
-                            await UserRepository().update(_me);
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text('ユーザー情報を変更しました'),
-                            ));
-                          }
-                        }
-                      },
+                    child: RaisedButton(
+                      child: Text('保存'),
+                      onPressed: _saving
+                          ? null
+                          : () async {
+                              setState(() => _saving = true);
+
+                              final form = _formKey.currentState;
+                              if (form.validate()) {
+                                form.save();
+                                if (_newbie) {
+                                  await UserRepository().create(
+                                    fullName: _me.fullName,
+                                    gender: _me.gender,
+                                    age: _me.age,
+                                    selfIntroduction: _me.selfIntroduction,
+                                    imageUrl: await Storage()
+                                        .upload(_previewingImageFile),
+                                  );
+                                  Navigator.of(context)
+                                      .pushReplacementNamed('/home');
+                                } else {
+                                  _me.imageUrl = await Storage()
+                                      .upload(_previewingImageFile);
+                                  await UserRepository().update(_me);
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text('ユーザー情報を変更しました'),
+                                  ));
+                                }
+
+                                setState(() => _saving = false);
+                              }
+                            },
                     ),
                   ),
                 ),

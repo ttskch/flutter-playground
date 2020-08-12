@@ -24,6 +24,7 @@ class _UserShowState extends State<UserShow> {
   bool _alreadyLiked = false;
   int _likesCount = 0;
   bool _waiting = true;
+  bool _sendingLike = false;
 
   @override
   void initState() {
@@ -109,13 +110,15 @@ class _UserShowState extends State<UserShow> {
             ),
           ],
         ),
-        onPressed: _alreadyLiked
+        onPressed: _alreadyLiked || _sendingLike
             ? null
             : () async {
+                setState(() => _sendingLike = true);
                 await LikeRepository().create(widget.user);
                 Scaffold.of(context).showSnackBar(SnackBar(
                   content: Text('いいねを送信しました'),
                 ));
+                setState(() => _sendingLike = true);
               },
       ),
     );

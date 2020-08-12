@@ -21,7 +21,6 @@ class LikeRepository {
       List<DocumentSnapshot> docs = ss.documents;
       final List<Like> likes = await Future.wait(
           docs.map((doc) async => await _fromDoc(doc)).toList());
-      // final List<Like> likes = docs.map((doc) => _fromDoc(doc)).toList();
       callback(likes);
     });
 

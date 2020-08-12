@@ -42,6 +42,9 @@ class _UserShowState extends State<UserShow> {
             child: ProfileImage(user: widget.user),
           ),
         ),
+        Center(
+          child: _buildLikeButton(),
+        ),
         ListTile(
           leading: Text('氏名'),
           title: Text(widget.user.fullName),
@@ -61,6 +64,25 @@ class _UserShowState extends State<UserShow> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLikeButton() {
+    return FlatButton(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.favorite_border,
+            color: Colors.red,
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 4.0),
+            child: Text('100'),
+          ),
+        ],
+      ),
+      onPressed: () => null,
     );
   }
 }

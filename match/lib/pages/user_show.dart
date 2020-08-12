@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
 import 'package:match/widgets/logout_button.dart';
+import 'package:match/widgets/profile_image.dart';
 import 'package:match/widgets/settings_button.dart';
 
 class UserShow extends StatefulWidget {
@@ -31,6 +32,35 @@ class _UserShowState extends State<UserShow> {
   }
 
   Widget _buildContent() {
-    return Text(widget.user.fullName);
+    return ListView(
+      children: [
+        Center(
+          child: Container(
+            margin: EdgeInsets.only(top: 16.0),
+            width: 200,
+            height: 200,
+            child: ProfileImage(user: widget.user),
+          ),
+        ),
+        ListTile(
+          leading: Text('氏名'),
+          title: Text(widget.user.fullName),
+        ),
+        ListTile(
+          leading: Text('性別'),
+          title: Text(widget.user.gender == Gender.Man ? '男性' : '女性'),
+        ),
+        ListTile(
+          leading: Text('年齢'),
+          title: Text(widget.user.age.toString()),
+        ),
+        ListTile(
+          leading: Text('自己紹介'),
+          title: Text(
+            widget.user.selfIntroduction,
+          ),
+        ),
+      ],
+    );
   }
 }

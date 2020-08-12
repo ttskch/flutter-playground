@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/widgets/logout_button.dart';
+import 'package:match/widgets/profile_image.dart';
 import 'package:match/widgets/settings_button.dart';
 import 'package:match/widgets/spinner.dart';
 
@@ -52,14 +53,11 @@ class _HomeState extends State<Home> {
       onTap: () =>
           Navigator.of(context).pushNamed('/user/show', arguments: user),
       child: Column(
-        children: <Widget>[
+        children: [
           Container(
             child: AspectRatio(
               aspectRatio: 1,
-              child: Image.network(
-                user.imageUrl ?? 'https://via.placeholder.com/500',
-                fit: BoxFit.cover,
-              ),
+              child: ProfileImage(user: user),
             ),
           ),
           Text('${user.fullName} (${user.age})'),

@@ -6,6 +6,7 @@ import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/services/auth.dart';
 import 'package:match/services/storage.dart';
+import 'package:match/widgets/profile_image.dart';
 import 'package:match/widgets/waitable_button.dart';
 import 'package:match/widgets/spinner.dart';
 
@@ -72,22 +73,14 @@ class _SettingsState extends State<Settings> {
             child: GestureDetector(
               child: Center(
                 child: Container(
-                  width: 150,
-                  height: 150,
+                  width: 200,
+                  height: 200,
                   child: _previewingImageFile != null
                       ? Image.file(
                           _previewingImageFile,
                           fit: BoxFit.cover,
                         )
-                      : _me.imageUrl != null
-                          ? Image.network(
-                              _me.imageUrl,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.network(
-                              'https://via.placeholder.com/150',
-                              fit: BoxFit.cover,
-                            ),
+                      : ProfileImage(user: _me),
                 ),
               ),
               onTap: () async {

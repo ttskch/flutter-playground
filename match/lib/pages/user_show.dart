@@ -8,8 +8,9 @@ class UserShow extends StatefulWidget {
   createState() => _UserShowState();
 
   UserShow({
+    Key key,
     @required this.user,
-  });
+  }) : super(key: key);
 
   final User user;
 }

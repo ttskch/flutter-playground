@@ -7,7 +7,7 @@ class WaitableButton extends StatefulWidget {
     this.label,
     this.textColor,
     this.color,
-  });
+  }) : super(key: key);
 
   final VoidCallback onPressed;
   final String label;

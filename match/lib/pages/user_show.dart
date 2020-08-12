@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:match/models/like.dart';
 import 'package:match/models/user.dart';
+import 'package:match/repositories/like_repository.dart';
+import 'package:match/repositories/user_repository.dart';
 import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/profile_image.dart';
 import 'package:match/widgets/settings_button.dart';
+import 'package:match/widgets/spinner.dart';
 
 class UserShow extends StatefulWidget {
   @override
@@ -17,6 +21,28 @@ class UserShow extends StatefulWidget {
 }
 
 class _UserShowState extends State<UserShow> {
+  bool _alreadyLiked = false;
+  int _likesCount = 0;
+  bool _waiting = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    () async {
+      final User me = await UserRepository().getMe();
+
+      LikeRepository().list(widget.user, (List<Like> likes) {
+        _alreadyLiked = likes.where((like) => like.from.id == me.id).length > 0;
+        _likesCount = likes.length;
+        _waiting = false;
+        if (mounted) {
+          setState(() => null);
+        }
+      });
+    }();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +53,7 @@ class _UserShowState extends State<UserShow> {
           SettingsButton(),
         ],
       ),
-      body: _buildContent(),
+      body: _waiting ? Spinner() : _buildContent(),
     );
   }
 
@@ -74,20 +100,23 @@ class _UserShowState extends State<UserShow> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.favorite_border,
+              _alreadyLiked ? Icons.favorite : Icons.favorite_border,
               color: Colors.red,
             ),
             Container(
               margin: EdgeInsets.only(left: 4.0),
-              child: Text('100'),
+              child: Text(_likesCount.toString()),
             ),
           ],
         ),
-        onPressed: () {
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text('いいねを送信しました'),
-          ));
-        },
+        onPressed: _alreadyLiked
+            ? null
+            : () async {
+                await LikeRepository().create(widget.user);
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('いいねを送信しました'),
+                ));
+              },
       ),
     );
   }

@@ -18,18 +18,18 @@ class UserRepository {
 
     query.snapshots().listen((QuerySnapshot ss) {
       List<DocumentSnapshot> docs = ss.documents;
-      final List<User> users = docs.map((doc) => _fromDocument(doc)).toList();
+      final List<User> users = docs.map((doc) => _fromDoc(doc)).toList();
       callback(users);
     });
 
     return (await query.getDocuments())
         .documents
-        .map((doc) => _fromDocument(doc))
+        .map((doc) => _fromDoc(doc))
         .toList();
   }
 
   Future<User> get(String id) async {
-    return _fromDocument(await _collection.document(id).get());
+    return _fromDoc(await _collection.document(id).get());
   }
 
   Future<User> getMe() async {
@@ -56,7 +56,7 @@ class UserRepository {
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    return _fromDocument(await docRef.get());
+    return _fromDoc(await docRef.get());
   }
 
   Future<void> update(User user) async {
@@ -67,7 +67,15 @@ class UserRepository {
     return _collection.document(user.id).updateData(_toObject(user));
   }
 
-  User _fromDocument(DocumentSnapshot doc) {
+  DocumentReference toDocRef(User user) {
+    return _collection.document(user.id);
+  }
+
+  Future<User> fromDocRef(DocumentReference docRef) async {
+    return _fromDoc(await docRef.get());
+  }
+
+  User _fromDoc(DocumentSnapshot doc) {
     if (doc.data == null) {
       return null;
     }

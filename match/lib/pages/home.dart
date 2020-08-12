@@ -1,8 +1,6 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
-import 'package:match/services/storage.dart';
 import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/settings_button.dart';
 import 'package:match/widgets/spinner.dart';

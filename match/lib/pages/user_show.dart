@@ -68,21 +68,27 @@ class _UserShowState extends State<UserShow> {
   }
 
   Widget _buildLikeButton() {
-    return FlatButton(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.favorite_border,
-            color: Colors.red,
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 4.0),
-            child: Text('100'),
-          ),
-        ],
+    return Builder(
+      builder: (BuildContext context) => FlatButton(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.favorite_border,
+              color: Colors.red,
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 4.0),
+              child: Text('100'),
+            ),
+          ],
+        ),
+        onPressed: () {
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text('いいねを送信しました'),
+          ));
+        },
       ),
-      onPressed: () => null,
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/profile_image.dart';
 import 'package:match/widgets/settings_button.dart';
 import 'package:match/widgets/spinner.dart';
+import 'package:match/widgets/waitable_flat_button.dart';
 
 class UserShow extends StatefulWidget {
   @override
@@ -24,7 +25,6 @@ class _UserShowState extends State<UserShow> {
   bool _alreadyLiked = false;
   int _likesCount = 0;
   bool _waiting = true;
-  bool _sendingLike = false;
 
   @override
   void initState() {
@@ -96,7 +96,7 @@ class _UserShowState extends State<UserShow> {
 
   Widget _buildLikeButton() {
     return Builder(
-      builder: (BuildContext context) => FlatButton(
+      builder: (BuildContext context) => WaitableFlatButton(
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -110,15 +110,13 @@ class _UserShowState extends State<UserShow> {
             ),
           ],
         ),
-        onPressed: _alreadyLiked || _sendingLike
+        onPressed: _alreadyLiked
             ? null
             : () async {
-                setState(() => _sendingLike = true);
                 await LikeRepository().create(widget.user);
                 Scaffold.of(context).showSnackBar(SnackBar(
                   content: Text('いいねを送信しました'),
                 ));
-                setState(() => _sendingLike = true);
               },
       ),
     );

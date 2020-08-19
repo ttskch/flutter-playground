@@ -1,14 +1,6 @@
 import 'package:meta/meta.dart';
 
 class User {
-  final String id;
-  String fullName;
-  Gender gender;
-  int age;
-  String selfIntroduction;
-  String imageUrl;
-  final DateTime createdAt;
-
   User({
     @required this.id,
     @required this.fullName,
@@ -18,6 +10,14 @@ class User {
     this.imageUrl,
     @required this.createdAt,
   });
+
+  final String id;
+  String fullName;
+  Gender gender;
+  int age;
+  String selfIntroduction;
+  String imageUrl;
+  final DateTime createdAt;
 }
 
 enum Gender {

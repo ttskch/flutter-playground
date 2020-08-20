@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:match/pages/home.dart';
+import 'package:match/pages/likers.dart';
 import 'package:match/pages/login.dart';
 import 'package:match/pages/settings.dart';
 import 'package:match/pages/signup.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/signup': (BuildContext context) => Signup(),
         '/settings': (BuildContext context) => Settings(),
         '/home': (BuildContext context) => Home(),
+        '/likers': (BuildContext context) => Likers(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/user/show') {

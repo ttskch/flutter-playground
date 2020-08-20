@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:match/models/user.dart';
 import 'package:match/services/auth.dart';
+import 'package:match/services/user_criteria.dart';
+import 'package:meta/meta.dart';
 
 typedef UsersListenCallback = void Function(List<User>);
 
@@ -8,24 +10,33 @@ class UserRepository {
   final CollectionReference _collection =
       Firestore.instance.collection('users');
 
-  Future<List<User>> list(
-    Gender gender,
-    UsersListenCallback callback,
-  ) async {
-    final Query query = _collection
-        .where('gender', isEqualTo: gender.toString())
-        .orderBy('createdAt');
+  Future<List<User>> list({
+    UserCriteria criteria,
+  }) async {
+    Query query = _collection.orderBy('createdAt');
 
-    query.snapshots().listen((QuerySnapshot ss) {
-      List<DocumentSnapshot> docs = ss.documents;
-      final List<User> users = docs.map((doc) => _fromDoc(doc)).toList();
-      callback(users);
-    });
+    if (criteria.gender != null) {
+      query = query.where('gender', isEqualTo: criteria.gender.toString());
+    }
 
-    return (await query.getDocuments())
+    // Queryで検索できるのはここまで.
+
+    List<User> users = (await query.getDocuments())
         .documents
         .map((doc) => _fromDoc(doc))
         .toList();
+
+    return criteria.filter(users);
+  }
+
+  // TODO: queryでor検索できないので仕方なくコレクション全体をlistenしている...
+  void listen({
+    @required UsersListenCallback callback,
+    UserCriteria criteria,
+  }) async {
+    _collection.snapshots().listen((qss) async {
+      callback(await list(criteria: criteria));
+    });
   }
 
   Future<User> get(String id) async {
@@ -44,7 +55,6 @@ class UserRepository {
     String imageUrl,
   }) async {
     final uid = await Auth().getCurrentUserId();
-
     DocumentReference docRef = _collection.document(uid);
 
     await docRef.setData({
@@ -67,12 +77,12 @@ class UserRepository {
     return _collection.document(user.id).updateData(_toObject(user));
   }
 
-  DocumentReference toDocRef(User user) {
-    return _collection.document(user.id);
-  }
-
   Future<User> fromDocRef(DocumentReference docRef) async {
     return _fromDoc(await docRef.get());
+  }
+
+  DocumentReference toDocRef(User user) {
+    return _collection.document(user.id);
   }
 
   User _fromDoc(DocumentSnapshot doc) {

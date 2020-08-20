@@ -3,6 +3,7 @@ import 'package:match/models/like.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/like_repository.dart';
 import 'package:match/repositories/user_repository.dart';
+import 'package:match/widgets/likers_button.dart';
 import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/profile_image.dart';
 import 'package:match/widgets/settings_button.dart';
@@ -33,14 +34,18 @@ class _UserShowState extends State<UserShow> {
     () async {
       final User me = await UserRepository().getMe();
 
-      LikeRepository().list(widget.user, (List<Like> likes) {
-        _alreadyLiked = likes.where((like) => like.from.id == me.id).length > 0;
-        _likesCount = likes.length;
-        _waiting = false;
-        if (mounted) {
-          setState(() => null);
-        }
-      });
+      LikeRepository().list(to: widget.user);
+      LikeRepository().listen(
+        to: widget.user,
+        callback: (List<Like> likes) {
+          _alreadyLiked = likes.map((like) => like.from.id).contains(me.id);
+          _likesCount = likes.length;
+          _waiting = false;
+          if (mounted) {
+            setState(() => null);
+          }
+        },
+      );
     }();
   }
 
@@ -52,6 +57,7 @@ class _UserShowState extends State<UserShow> {
         actions: <Widget>[
           LogoutButton(),
           SettingsButton(),
+          LikersButton(),
         ],
       ),
       body: _waiting ? Spinner() : _buildContent(),

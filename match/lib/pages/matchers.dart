@@ -2,30 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/services/user_criteria.dart';
-import 'package:match/widgets/likers_button.dart';
-import 'package:match/widgets/logout_button.dart';
-import 'package:match/widgets/matchers_button.dart';
 import 'package:match/widgets/profile_image.dart';
-import 'package:match/widgets/settings_button.dart';
 import 'package:match/widgets/spinner.dart';
 
-class Home extends StatefulWidget {
+class Matchers extends StatefulWidget {
   @override
-  createState() => _HomeState();
+  createState() => _MatchersState();
 }
 
-class _HomeState extends State<Home> {
+class _MatchersState extends State<Matchers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('HOME'),
-        actions: <Widget>[
-          LogoutButton(),
-          SettingsButton(),
-          LikersButton(),
-          MatchersButton(),
-        ],
+        title: Text('マッチング相手一覧'),
       ),
       body: _buildGrid(),
     );
@@ -38,6 +28,7 @@ class _HomeState extends State<Home> {
         if (ss.connectionState != ConnectionState.done) {
           return Spinner();
         }
+
         return Container(
           padding: EdgeInsets.all(5.0),
           child: GridView.count(
@@ -73,9 +64,6 @@ class _HomeState extends State<Home> {
   }
 
   Future<List<User>> _getSearchedUsers() async {
-    Gender targetGender = (await UserRepository().getMe()).gender == Gender.Man
-        ? Gender.Woman
-        : Gender.Man;
-    return UserRepository().list(criteria: UserCriteria(gender: targetGender));
+    return UserRepository().list(criteria: UserCriteria(onlyMatchers: true));
   }
 }

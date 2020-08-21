@@ -25,6 +25,8 @@ class UserShow extends StatefulWidget {
 class _UserShowState extends State<UserShow> {
   bool _alreadyLiked = false;
   int _likesCount = 0;
+  Like _likeToMe;
+  bool _alreadyMatched = false;
   bool _waiting = true;
 
   @override
@@ -34,7 +36,21 @@ class _UserShowState extends State<UserShow> {
     () async {
       final User me = await UserRepository().getMe();
 
-      LikeRepository().list(to: widget.user);
+      LikeRepository().listen(
+          from: widget.user,
+          callback: (List<Like> likes) {
+            _likeToMe = likes.firstWhere(
+              (like) => like.to.id == me.id,
+              orElse: () => _likeToMe = null,
+            );
+            if (_likeToMe != null && _likeToMe.matchedAt != null) {
+              _alreadyMatched = true;
+            }
+            if (mounted) {
+              setState(() => null);
+            }
+          });
+
       LikeRepository().listen(
         to: widget.user,
         callback: (List<Like> likes) {
@@ -67,6 +83,22 @@ class _UserShowState extends State<UserShow> {
   Widget _buildContent() {
     return ListView(
       children: [
+        Container(
+          child: _likeToMe == null
+              ? null
+              : Container(
+                  child: Center(
+                    child: Text(
+                      _likeToMe.matchedAt == null
+                          ? 'あなたにいいねしています'
+                          : 'マッチングしています',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  color: Colors.redAccent,
+                  padding: EdgeInsets.all(5.0),
+                ),
+        ),
         Center(
           child: Container(
             margin: EdgeInsets.only(top: 16.0),
@@ -107,7 +139,9 @@ class _UserShowState extends State<UserShow> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              _alreadyLiked ? Icons.favorite : Icons.favorite_border,
+              _alreadyLiked || _alreadyMatched
+                  ? Icons.favorite
+                  : Icons.favorite_border,
               color: Colors.red,
             ),
             Container(
@@ -116,15 +150,28 @@ class _UserShowState extends State<UserShow> {
             ),
           ],
         ),
-        onPressed: _alreadyLiked
+        onPressed: _alreadyLiked || _alreadyMatched
             ? null
-            : () async {
-                await LikeRepository().create(widget.user);
+            : () {
+                if (_likeToMe == null) {
+                  _like();
+                } else if (_likeToMe.matchedAt == null) {
+                  _match();
+                }
                 Scaffold.of(context).showSnackBar(SnackBar(
                   content: Text('いいねを送信しました'),
                 ));
               },
       ),
     );
+  }
+
+  void _like() async {
+    await LikeRepository().create(widget.user);
+  }
+
+  void _match() async {
+    _likeToMe.matchedAt = DateTime.now();
+    await LikeRepository().update(_likeToMe);
   }
 }

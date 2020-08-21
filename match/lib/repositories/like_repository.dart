@@ -18,9 +18,15 @@ class LikeRepository {
       throw ArgumentError('fromまたはtoのいずれかは必須です');
     }
 
-    final Query query = _collection
-        .where('to', isEqualTo: UserRepository().toDocRef(to))
-        .orderBy('createdAt');
+    Query query = _collection.orderBy('createdAt');
+
+    if (from != null) {
+      query = query.where('from', isEqualTo: UserRepository().toDocRef(from));
+    }
+
+    if (to != null) {
+      query = query.where('to', isEqualTo: UserRepository().toDocRef(to));
+    }
 
     return Future.wait((await query.getDocuments())
         .documents
@@ -66,6 +72,10 @@ class LikeRepository {
     return _fromDoc(await docRef.get());
   }
 
+  Future<void> update(Like like) async {
+    return _collection.document(like.id).updateData(_toObject(like));
+  }
+
   Future<Like> fromDocRef(DocumentReference docRef) async {
     return _fromDoc(await docRef.get());
   }
@@ -83,7 +93,17 @@ class LikeRepository {
       id: doc.documentID,
       from: await UserRepository().fromDocRef(doc.data['from']),
       to: await UserRepository().fromDocRef(doc.data['to']),
+      matchedAt:
+          doc.data['matchedAt'] == null ? null : doc.data['matchedAt'].toDate(),
       createdAt: (doc.data['createdAt'] ?? Timestamp.now()).toDate(),
     );
+  }
+
+  Map<String, dynamic> _toObject(Like like) {
+    return {
+      'from': UserRepository().toDocRef(like.from),
+      'to': UserRepository().toDocRef(like.to),
+      'matchedAt': Timestamp.fromDate(like.matchedAt),
+    };
   }
 }

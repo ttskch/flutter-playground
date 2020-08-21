@@ -3,10 +3,7 @@ import 'package:match/models/like.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/like_repository.dart';
 import 'package:match/repositories/user_repository.dart';
-import 'package:match/widgets/likers_button.dart';
-import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/profile_image.dart';
-import 'package:match/widgets/settings_button.dart';
 import 'package:match/widgets/spinner.dart';
 import 'package:match/widgets/waitable_flat_button.dart';
 
@@ -70,11 +67,6 @@ class _UserShowState extends State<UserShow> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.user.fullName),
-        actions: <Widget>[
-          LogoutButton(),
-          SettingsButton(),
-          LikersButton(),
-        ],
       ),
       body: _waiting ? Spinner() : _buildContent(),
     );

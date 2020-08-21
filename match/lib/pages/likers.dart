@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/services/user_criteria.dart';
-import 'package:match/widgets/logout_button.dart';
 import 'package:match/widgets/profile_image.dart';
-import 'package:match/widgets/settings_button.dart';
 import 'package:match/widgets/spinner.dart';
 
 class Likers extends StatefulWidget {
@@ -18,10 +16,6 @@ class _LikersState extends State<Likers> {
     return Scaffold(
       appBar: AppBar(
         title: Text('受け取ったいいね一覧'),
-        actions: <Widget>[
-          LogoutButton(),
-          SettingsButton(),
-        ],
       ),
       body: _buildGrid(),
     );

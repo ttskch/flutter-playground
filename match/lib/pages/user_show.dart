@@ -41,7 +41,7 @@ class _UserShowState extends State<UserShow> {
           callback: (List<Like> likes) {
             _likeToMe = likes.firstWhere(
               (like) => like.to.id == me.id,
-              orElse: () => _likeToMe = null,
+              orElse: () => null,
             );
             if (_likeToMe != null && _likeToMe.matchedAt != null) {
               _alreadyMatched = true;

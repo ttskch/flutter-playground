@@ -1,4 +1,3 @@
-import 'package:match/models/like.dart';
 import 'package:match/models/user.dart';
 import 'package:match/repositories/like_repository.dart';
 import 'package:match/repositories/user_repository.dart';
@@ -14,22 +13,26 @@ class UserCriteria {
 
   Future<List<User>> filter(List<User> users) async {
     final User me = await UserRepository().getMe();
-    final List<Like> likesToMe = await LikeRepository().list(to: me);
+    List<User> result = [];
 
-    return users.where((user) {
+    await Future.forEach(users, (user) async {
       if (gender != null && user.gender != gender) {
-        return false;
+        return null;
       }
 
       if (onlyLikers) {
-        if (!likesToMe.map((like) => like.from.id).contains(user.id)) {
-          return false;
+        if (!(await LikeRepository().list(to: me))
+            .map((like) => like.from.id)
+            .contains(user.id)) {
+          return null;
         }
-
-        // TODO: LikeのcreatedAt降順でソートし直す.
       }
 
-      return true;
-    }).toList();
+      result.add(user);
+    });
+
+    // TODO: onlyLikersの場合はLikeのcreatedAt降順でソートし直す.
+
+    return result;
   }
 }

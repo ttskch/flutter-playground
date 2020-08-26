@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:match/models/search_condition.dart';
 import 'package:match/models/user.dart';
+import 'package:match/repositories/search_condition_repository.dart';
 import 'package:match/repositories/user_repository.dart';
 import 'package:match/services/user_criteria.dart';
 import 'package:match/widgets/spinner.dart';
@@ -23,7 +25,13 @@ class _SearchState extends State<Search> {
     super.initState();
 
     () async {
-      // TODO: 保存されている検索条件を取得.
+      SearchCondition condition = await SearchConditionRepository().get();
+      if (condition != null) {
+        _gender = condition.gender;
+        _minAge = condition.minAge;
+        _maxAge = condition.maxAge;
+        _query = condition.query;
+      }
 
       _waiting = false;
 
@@ -86,6 +94,7 @@ class _SearchState extends State<Search> {
                     return null;
                   },
                   onSaved: (value) => _minAge = int.tryParse(value),
+                  initialValue: _minAge == null ? '' : _minAge.toString(),
                 ),
                 TextFormField(
                   keyboardType: TextInputType.number,
@@ -99,12 +108,14 @@ class _SearchState extends State<Search> {
                     return null;
                   },
                   onSaved: (value) => _maxAge = int.tryParse(value),
+                  initialValue: _maxAge == null ? '' : _maxAge.toString(),
                 ),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'フリーワード',
                   ),
                   onSaved: (value) => _query = value,
+                  initialValue: _query,
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 10.0),
@@ -114,6 +125,16 @@ class _SearchState extends State<Search> {
                         final form = _formKey.currentState;
                         if (form.validate()) {
                           form.save();
+
+                          // 検索条件を保存.
+                          SearchConditionRepository().upsert(
+                            gender: _gender,
+                            minAge: _minAge,
+                            maxAge: _maxAge,
+                            query: _query,
+                          );
+
+                          // 検索を実行.
                           final List<User> users = await UserRepository().list(
                             criteria: UserCriteria(
                               gender: _gender ??
@@ -124,6 +145,7 @@ class _SearchState extends State<Search> {
                               query: _query,
                             ),
                           );
+
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             '/home/searched',
                             (_) => false, // 新しい画面をpushしない.

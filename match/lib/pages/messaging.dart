@@ -31,6 +31,13 @@ class _MessagingState extends State<Messaging> {
       final User me = await UserRepository().getMe();
 
       MessageRepository().listen(me, widget.user, (messages) {
+        // 既読をつける.
+        messages.forEach((message) async {
+          if (message.from.id == widget.user.id) {
+            MessageRepository().read(message);
+          }
+        });
+
         _messages = messages;
         _waiting = false;
         if (mounted) {
@@ -59,7 +66,8 @@ class _MessagingState extends State<Messaging> {
   Widget _buildContent() {
     return ListView(
       children: _messages
-          .map((message) => ListTile(
+          .map(
+            (message) => ListTile(
                 leading: ProfileImage(user: message.from),
                 title: Text(message.body),
                 subtitle: Container(
@@ -69,7 +77,13 @@ class _MessagingState extends State<Messaging> {
                   ),
                   margin: EdgeInsets.only(top: 12.0),
                 ),
-              ))
+                trailing: message.isRead
+                    ? Text(
+                        '既読',
+                        style: TextStyle(fontSize: 10.0),
+                      )
+                    : null),
+          )
           .toList(),
     );
   }

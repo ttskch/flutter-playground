@@ -47,7 +47,7 @@ class _MatchersState extends State<Matchers> {
   Widget _buildTile(User user) {
     return GestureDetector(
       onTap: () =>
-          Navigator.of(context).pushNamed('/user/show', arguments: user),
+          Navigator.of(context).pushNamed('/messaging', arguments: user),
       child: Column(
         children: [
           Container(

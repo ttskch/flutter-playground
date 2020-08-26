@@ -4,6 +4,7 @@ import 'package:match/pages/home.dart';
 import 'package:match/pages/likers.dart';
 import 'package:match/pages/login.dart';
 import 'package:match/pages/matchers.dart';
+import 'package:match/pages/messaging.dart';
 import 'package:match/pages/settings.dart';
 import 'package:match/pages/signup.dart';
 import 'package:match/pages/user_show.dart';
@@ -49,14 +50,20 @@ class MyApp extends StatelessWidget {
         '/matchers': (BuildContext context) => Matchers(),
       },
       onGenerateRoute: (settings) {
-        if (settings.name == '/user/show') {
-          return MaterialPageRoute(
-            builder: (BuildContext context) =>
-                UserShow(user: settings.arguments as User),
-          );
+        switch (settings.name) {
+          case '/user/show':
+            return MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  UserShow(user: settings.arguments as User),
+            );
+          case '/messaging':
+            return MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  Messaging(user: settings.arguments as User),
+            );
+          default:
+            return null;
         }
-
-        return null;
       },
     );
   }

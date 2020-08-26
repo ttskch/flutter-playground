@@ -6,11 +6,17 @@ import 'package:match/repositories/user_repository.dart';
 class UserCriteria {
   UserCriteria({
     this.gender,
+    this.minAge,
+    this.maxAge,
+    this.query,
     this.onlyLikers = false,
     this.onlyMatchers = false,
   });
 
   Gender gender;
+  int minAge;
+  int maxAge;
+  String query;
   bool onlyLikers;
   bool onlyMatchers;
 
@@ -18,8 +24,20 @@ class UserCriteria {
     final User me = await UserRepository().getMe();
     List<User> result = [];
 
-    await Future.forEach(users, (user) async {
+    await Future.forEach(users, (User user) async {
       if (gender != null && user.gender != gender) {
+        return null;
+      }
+
+      if (minAge != null && user.age < minAge) {
+        return null;
+      }
+
+      if (maxAge != null && user.age > maxAge) {
+        return null;
+      }
+
+      if (query != null && !user.selfIntroduction.contains(query)) {
         return null;
       }
 

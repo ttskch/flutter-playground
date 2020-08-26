@@ -18,6 +18,10 @@ class User {
   String selfIntroduction;
   String imageUrl;
   final DateTime createdAt;
+
+  Gender get oppositeGender {
+    return gender == Gender.Man ? Gender.Woman : Gender.Man;
+  }
 }
 
 enum Gender {

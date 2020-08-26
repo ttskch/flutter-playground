@@ -5,6 +5,7 @@ import 'package:match/pages/likers.dart';
 import 'package:match/pages/login.dart';
 import 'package:match/pages/matchers.dart';
 import 'package:match/pages/messaging.dart';
+import 'package:match/pages/search.dart';
 import 'package:match/pages/settings.dart';
 import 'package:match/pages/signup.dart';
 import 'package:match/pages/user_show.dart';
@@ -48,9 +49,15 @@ class MyApp extends StatelessWidget {
         '/home': (BuildContext context) => Home(),
         '/likers': (BuildContext context) => Likers(),
         '/matchers': (BuildContext context) => Matchers(),
+        '/search': (BuildContext context) => Search(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {
+          case '/home/searched':
+            return MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  Home(users: settings.arguments as List<User>),
+            );
           case '/user/show':
             return MaterialPageRoute(
               builder: (BuildContext context) =>

@@ -12,6 +12,13 @@ import 'package:match/widgets/spinner.dart';
 class Home extends StatefulWidget {
   @override
   createState() => _HomeState();
+
+  Home({
+    Key key,
+    this.users,
+  }) : super(key: key);
+
+  final List<User> users;
 }
 
 class _HomeState extends State<Home> {
@@ -27,29 +34,47 @@ class _HomeState extends State<Home> {
           MatchersButton(),
         ],
       ),
-      body: _buildGrid(),
+      body: _build(),
     );
   }
 
-  Widget _buildGrid() {
-    return FutureBuilder(
-      future: _getSearchedUsers(),
-      builder: (BuildContext context, AsyncSnapshot<List<User>> ss) {
-        if (ss.connectionState != ConnectionState.done) {
-          return Spinner();
-        }
-        return Container(
+  Widget _build() {
+    return widget.users != null
+        ? _buildGrid(widget.users)
+        : FutureBuilder(
+            future: _getSearchedUsers(),
+            builder: (BuildContext context, AsyncSnapshot<List<User>> ss) {
+              if (ss.connectionState != ConnectionState.done) {
+                return Spinner();
+              }
+              return _buildGrid(ss.data);
+            },
+          );
+  }
+
+  Widget _buildGrid(List<User> users) {
+    return ListView(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: RaisedButton(
+            child: Icon(Icons.search),
+            onPressed: () => Navigator.of(context).pushNamed('/search'),
+          ),
+        ),
+        Container(
           padding: EdgeInsets.all(5.0),
           child: GridView.count(
+            shrinkWrap: true,
             mainAxisSpacing: 5.0,
             crossAxisSpacing: 5.0,
             scrollDirection: Axis.vertical,
             crossAxisCount: 2,
             childAspectRatio: 0.65,
-            children: ss.data.map(_buildTile).toList(),
+            children: users.map(_buildTile).toList(),
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 
@@ -73,9 +98,8 @@ class _HomeState extends State<Home> {
   }
 
   Future<List<User>> _getSearchedUsers() async {
-    Gender targetGender = (await UserRepository().getMe()).gender == Gender.Man
-        ? Gender.Woman
-        : Gender.Man;
-    return UserRepository().list(criteria: UserCriteria(gender: targetGender));
+    return UserRepository().list(
+        criteria: UserCriteria(
+            gender: (await UserRepository().getMe()).oppositeGender));
   }
 }
